@@ -1,0 +1,56 @@
+# Archivos de build y distribución
+build/
+dist/
+release/
+*.spec.bak
+installers/*.exe
+*.zip
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+.eggs/
+
+# Base de datos local
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Configuración sensible
+.env
+*.key
+*.pem
+
+# Logs
+*.log
+logs/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporales
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# PyInstaller
+*.manifest
+*.spec.bak

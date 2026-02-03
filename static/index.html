@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archivo Virtual de Procesos Judiciales</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <h1>Justicia<span>Virtual</span></h1>
+            </div>
+            <div class="ai-search-container">
+                <input type="text" id="ai-search-input"
+                    placeholder="🤖 Búsqueda inteligente: 'procesos activos de enero'..." />
+                <button class="btn btn-primary" onclick="performAISearch()">Buscar con IA</button>
+            </div>
+            <div class="user-controls">
+                <span id="current-user-display">Usuario: Admin</span>
+                <select id="role-selector">
+                    <option value="admin" selected>Admin (Total)</option>
+                    <option value="operator">Operator (Crea/Edita)</option>
+                    <option value="viewer">Viewer (Solo lectura)</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <nav class="sidebar">
+                <ul>
+                    <li><a href="#" id="nav-list" class="active">Listado de Procesos</a></li>
+                    <li><a href="#" id="nav-create">Registrar Proceso</a></li>
+                </ul>
+            </nav>
+
+            <main id="content">
+                <!-- Content will be injected here -->
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-container" class="hidden">
+        <div class="modal">
+            <button class="close-modal">&times;</button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div id="ai-chat-widget" class="chat-widget hidden">
+        <div class="chat-header">
+            <h3>🤖 Asistente Legal IA</h3>
+            <button onclick="toggleChat()">&times;</button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Escribe tu consulta..."
+                onkeypress="if(event.key==='Enter') sendChatMessage()" />
+            <button onclick="sendChatMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <!-- Chat Toggle Button -->
+    <button class="chat-toggle-btn" onclick="toggleChat()">
+        💬 Asistente IA
+    </button>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

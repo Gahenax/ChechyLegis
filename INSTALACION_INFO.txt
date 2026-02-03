@@ -1,0 +1,67 @@
+ChechyLegis - Archivo Virtual de Procesos Judiciales con IA
+============================================================
+
+Bienvenido al instalador de ChechyLegis.
+
+Este software le permitirá gestionar procesos judiciales con capacidades 
+avanzadas de Inteligencia Artificial usando Google Gemini.
+
+
+CARACTERÍSTICAS PRINCIPALES:
+-----------------------------
+✓ Gestión completa de procesos judiciales (CRUD)
+✓ Sistema de auditoría total de cambios
+✓ Control de acceso por roles (Admin, Operator, Viewer)
+✓ Búsqueda en lenguaje natural con IA
+✓ Análisis automático de procesos
+✓ Búsqueda de casos similares
+✓ Asistente virtual conversacional
+✓ Interfaz web moderna y responsive
+
+
+REQUISITOS DEL SISTEMA:
+-----------------------
+• Windows 10 o superior (64 bits)
+• 500 MB de espacio libre en disco
+• Conexión a Internet para funciones de IA
+• Navegador web moderno (Chrome, Firefox, Edge)
+
+
+CONFIGURACIÓN POST-INSTALACIÓN:
+-------------------------------
+Después de la instalación, deberá:
+
+1. Obtener una API Key de Google Gemini (GRATIS):
+   https://aistudio.google.com/app/apikey
+
+2. Configurar la API Key:
+   - Abrir: C:\Program Files\ChechyLegis\.env
+   - Agregar: GEMINI_API_KEY=su_api_key_aqui
+
+3. Ejecutar ChechyLegis desde el menú de inicio o escritorio
+
+4. Abrir su navegador en: http://127.0.0.1:8000
+
+
+DOCUMENTACIÓN:
+--------------
+Para más información, consulte:
+• README.md - Documentación completa
+• https://github.com/yourusername/ChechyLegis
+
+
+SOPORTE:
+--------
+Si encuentra algún problema durante la instalación o uso:
+• Revise la documentación incluida
+• Consulte el repositorio de GitHub
+• Verifique que su API Key esté correctamente configurada
+
+
+LICENCIA:
+---------
+Este software se distribuye bajo la Licencia MIT.
+Consulte LICENSE.txt para más detalles.
+
+
+¡Gracias por elegir ChechyLegis!
