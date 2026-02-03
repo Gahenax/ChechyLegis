@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from datetime import date
+from datetime import date, datetime
 from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
@@ -46,6 +47,27 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ---------------------------------------------------------
+# MIDDLEWARE DE SEGURIDAD (SEC-01, SEC-06)
+# ---------------------------------------------------------
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    # HSTS (Strict-Transport-Security) - 1 año
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    # Evitar inferencia de tipos MIME
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    # Protección básica XSS (aunque moderna browsers lo ignoran, es compliance)
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    return response
+
+# ---------------------------------------------------------
+# HEALTHCHECK (OBS-02)
+# ---------------------------------------------------------
+@app.get("/api/health")
+def health_check():
+    return {"status": "ok", "timestamp": datetime.now().isoformat(), "service": "ChechyLegis"}
 
 # Simple Mock Auth Dependency
 def get_current_user_role(request: Request):
@@ -262,4 +284,24 @@ def chat_assistant(
     }
 
 # Static files for frontend
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+@app.get("/", include_in_schema=False)
+async def serve_root():
+    return FileResponse("static/index.html")
+
+@app.get("/{full_path:path}", include_in_schema=False)
+async def serve_spa_or_static(full_path: str):
+    # Seguridad básica contra directory traversal
+    if ".." in full_path:
+         raise HTTPException(status_code=404)
+         
+    # 1. Intentar servir archivo estático exacto
+    static_file_path = os.path.join("static", full_path)
+    if os.path.isfile(static_file_path):
+        return FileResponse(static_file_path)
+    
+    # 2. Si es API, dejar que sea 404 real (aunque las rutas API definidas arriba tienen precedencia)
+    if full_path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="Not Found")
+        
+    # 3. Fallback a index.html para rutas de SPA (ej: /settings, /login)
+    return FileResponse("static/index.html")

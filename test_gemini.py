@@ -4,6 +4,12 @@ Ejecutar: python test_gemini.py
 """
 
 import os
+import sys
+# Force UTF-8 encoding for stdout/stderr to handle emojis on Windows
+if sys.platform == 'win32':
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
+    
 from dotenv import load_dotenv
 from app.gemini_service import GeminiService
 
@@ -26,7 +32,7 @@ def test_gemini_connection():
         print("   3. Obtén tu API key en: https://aistudio.google.com/app/apikey")
         return False
     
-    print(f"✅ API Key encontrada: {api_key[:10]}...{api_key[-5:]}")
+    print(f"✅ API Key encontrada: [OCULTO]")
     
     # Inicializar servicio
     try:

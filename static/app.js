@@ -6,9 +6,11 @@ const content = document.getElementById('content');
 const roleSelector = document.getElementById('role-selector');
 const navList = document.getElementById('nav-list');
 const navCreate = document.getElementById('nav-create');
+const navSettings = document.getElementById('nav-settings');
 
 // State Management
-let filters = {
+// Load filters from storage or default
+let filters = JSON.parse(localStorage.getItem('chechy_filters')) || {
     fecha_desde: '',
     fecha_hasta: '',
     estado: '',
@@ -32,10 +34,28 @@ navCreate.addEventListener('click', () => {
     renderCreateForm();
 });
 
+navSettings.addEventListener('click', () => {
+    setActiveNav(navSettings);
+    renderSettings();
+});
+
 function setActiveNav(el) {
     document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
     el.classList.add('active');
 }
+
+// --- ANTIGRAVITY_HELPER: safe stringify for UI rendering ---
+function safeStringify(x) {
+    try {
+        if (x === null || x === undefined) return '';
+        if (typeof x === 'string') return x;
+        // Pretty-print objects/arrays for readability; replace later with proper renderer/table.
+        return JSON.stringify(x, null, 2);
+    } catch (e) {
+        return String(x);
+    }
+}
+// --- END ANTIGRAVITY_HELPER ---
 
 // API Helpers
 async function apiCall(endpoint, method = 'GET', body = null) {
@@ -133,6 +153,7 @@ function renderListPage(procesos) {
 
 function updateFilter(key, val) {
     filters[key] = val;
+    localStorage.setItem('chechy_filters', JSON.stringify(filters));
     loadList();
 }
 
@@ -270,6 +291,82 @@ async function deleteProceso(id) {
             alert(err.message);
         }
     }
+}
+
+// ============================================
+// SETTINGS
+// ============================================
+
+function renderSettings() {
+    // Get all content from localStorage for debugging/viewing
+    const storageItems = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const val = localStorage.getItem(key);
+        // Try to parse to see if it's an object
+        let parsed = val;
+        let isObj = false;
+        try {
+            parsed = JSON.parse(val);
+            if (typeof parsed === 'object' && parsed !== null) isObj = true;
+        } catch (e) { }
+
+        storageItems.push({ key, val, parsed, isObj });
+    }
+
+    content.innerHTML = `
+        <div class="view-header">
+            <h2>Configuración del Sistema</h2>
+        </div>
+        
+        <div class="card">
+            <h3>Preferencias Locales</h3>
+            <p style="color:var(--text-light); margin-bottom:1rem;">
+                Estas configuraciones se guardan en tu navegador.
+            </p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Clave</th>
+                        <th>Valor (Vista Previa)</th>
+                        <th>Tipo</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${storageItems.map(item => `
+                        <tr>
+                            <td><strong>${item.key}</strong></td>
+                            <td title="${safeStringify(item.val)}">
+                                ${item.isObj
+            ? `<pre style="margin:0; font-size:0.75rem;">${safeStringify(item.parsed).slice(0, 50)}${JSON.stringify(item.parsed).length > 50 ? '...' : ''}</pre>`
+            : item.val}
+                            </td>
+                            <td><span class="badge badge-${item.isObj ? 'activo' : 'terminado'}">${item.isObj ? 'JSON' : 'Texto'}</span></td>
+                            <td>
+                                <button class="btn-text" style="color:red;" onclick="localStorage.removeItem('${item.key}'); renderSettings();">Borrar</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                    ${storageItems.length === 0 ? '<tr><td colspan="4" style="text-align:center">No hay configuraciones guardadas</td></tr>' : ''}
+                </tbody>
+            </table>
+            
+            <div style="margin-top:2rem;">
+                 <button class="btn" onclick="localStorage.clear(); renderSettings();">⚠️ Limpiar Todo</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>Diagnóstico UI</h3>
+            <p>Prueba de renderizado de objetos (Anti-Bug):</p>
+            <div id="debug-render-area" style="background:#f5f5f5; padding:1rem; border-radius:4px;">
+                <!-- This should NOT show [object Object] -->
+                ${safeStringify({ test: "OK", nested: { array: [1, 2, 3] } })}
+            </div>
+        </div>
+    `;
 }
 
 // ============================================

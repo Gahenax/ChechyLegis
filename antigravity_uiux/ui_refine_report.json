@@ -1,0 +1,134 @@
+{
+  "timestamp": "2026-02-03T15:41:17.309961Z",
+  "status": "PATCHED",
+  "repo": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy",
+  "apply": 1,
+  "suspects_top": [
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js",
+      "line_no": 21,
+      "kind": "pattern",
+      "line": "document.getElementById('current-user-display').innerText = `Usuario: ${currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}`;",
+      "context": "   0016: };\n   0017: \n   0018: // Initialization\n   0019: roleSelector.addEventListener('change', (e) => {\n   0020:     currentRole = e.target.value;\n>> 0021:     document.getElementById('current-user-display').innerText = `Usuario: ${currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}`;\n   0022:     loadList(); // Refresh list to respect roles (especially delete button visibility)\n   0023: });\n   0024: \n   0025: navList.addEventListener('click', () => {\n   0026:     setActiveNav(navList);"
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js",
+      "line_no": 66,
+      "kind": "pattern",
+      "line": "content.innerHTML = `<div class=\"card error\">${err.message}</div>`;",
+      "context": "   0061:     const query = new URLSearchParams(filters).toString();\n   0062:     try {\n   0063:         const procesos = await apiCall(`/procesos?${query}`);\n   0064:         renderListPage(procesos);\n   0065:     } catch (err) {\n>> 0066:         content.innerHTML = `<div class=\"card error\">${err.message}</div>`;\n   0067:     }\n   0068: }\n   0069: \n   0070: function renderListPage(procesos) {\n   0071:     content.innerHTML = `"
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js",
+      "line_no": 258,
+      "kind": "pattern",
+      "line": "errorEl.innerText = err.message;",
+      "context": "   0253:                 await apiCall('/procesos', 'POST', jsonData);\n   0254:             }\n   0255:             loadList();\n   0256:         } catch (err) {\n   0257:             const errorEl = document.getElementById('form-error');\n>> 0258:             errorEl.innerText = err.message;\n   0259:             errorEl.classList.remove('hidden');\n   0260:         }\n   0261:     };\n   0262: }\n   0263: "
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js",
+      "line_no": 488,
+      "kind": "pattern",
+      "line": "messageDiv.textContent = message;",
+      "context": "   0483: \n   0484: function addChatMessage(role, message) {\n   0485:     const messagesContainer = document.getElementById('chat-messages');\n   0486:     const messageDiv = document.createElement('div');\n   0487:     messageDiv.className = `chat-message ${role}`;\n>> 0488:     messageDiv.textContent = message;\n   0489:     messagesContainer.appendChild(messageDiv);\n   0490:     messagesContainer.scrollTop = messagesContainer.scrollHeight;\n   0491: \n   0492:     chatHistory.push({ role, message });\n   0493: }"
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\static\\app.js",
+      "line_no": 22,
+      "kind": "pattern",
+      "line": "document.getElementById('current-user-display').innerText = `Usuario: ${currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}`;",
+      "context": "   0017: };\n   0018: \n   0019: // Initialization\n   0020: roleSelector.addEventListener('change', (e) => {\n   0021:     currentRole = e.target.value;\n>> 0022:     document.getElementById('current-user-display').innerText = `Usuario: ${currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}`;\n   0023:     loadList(); // Refresh list to respect roles (especially delete button visibility)\n   0024: });\n   0025: \n   0026: navList.addEventListener('click', () => {\n   0027:     setActiveNav(navList);"
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\static\\app.js",
+      "line_no": 67,
+      "kind": "pattern",
+      "line": "content.innerHTML = `<div class=\"card error\">${err.message}</div>`;",
+      "context": "   0062:     const query = new URLSearchParams(filters).toString();\n   0063:     try {\n   0064:         const procesos = await apiCall(`/procesos?${query}`);\n   0065:         renderListPage(procesos);\n   0066:     } catch (err) {\n>> 0067:         content.innerHTML = `<div class=\"card error\">${err.message}</div>`;\n   0068:     }\n   0069: }\n   0070: \n   0071: function renderListPage(procesos) {\n   0072:     content.innerHTML = `"
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\static\\app.js",
+      "line_no": 260,
+      "kind": "pattern",
+      "line": "errorEl.innerText = err.message;",
+      "context": "   0255:                 await apiCall('/procesos', 'POST', jsonData);\n   0256:             }\n   0257:             loadList();\n   0258:         } catch (err) {\n   0259:             const errorEl = document.getElementById('form-error');\n>> 0260:             errorEl.innerText = err.message;\n   0261:             errorEl.classList.remove('hidden');\n   0262:         }\n   0263:     };\n   0264: }\n   0265: "
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\static\\app.js",
+      "line_no": 490,
+      "kind": "pattern",
+      "line": "messageDiv.textContent = message;",
+      "context": "   0485: \n   0486: function addChatMessage(role, message) {\n   0487:     const messagesContainer = document.getElementById('chat-messages');\n   0488:     const messageDiv = document.createElement('div');\n   0489:     messageDiv.className = `chat-message ${role}`;\n>> 0490:     messageDiv.textContent = message;\n   0491:     messagesContainer.appendChild(messageDiv);\n   0492:     messagesContainer.scrollTop = messagesContainer.scrollHeight;\n   0493: \n   0494:     chatHistory.push({ role, message });\n   0495: }"
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js",
+      "line_no": 126,
+      "kind": "pattern",
+      "line": "`).join('')}",
+      "context": "   0121:                                 <button class=\"btn-text\" onclick=\"loadDetail(${p.id})\">Ver</button>\n   0122:                                 ${currentRole !== 'viewer' ? `<button class=\"btn-text\" onclick=\"renderEditForm(${p.id})\">Editar</button>` : ''}\n   0123:                                 ${currentRole === 'admin' ? `<button class=\"btn-text\" style=\"color:red\" onclick=\"deleteProceso(${p.id})\">Eliminar</button>` : ''}\n   0124:                             </td>\n   0125:                         </tr>\n>> 0126:                     `).join('')}\n   0127:                     ${procesos.length === 0 ? '<tr><td colspan=\"5\" style=\"text-align:center\">No se encontraron registros</td></tr>' : ''}\n   0128:                 </tbody>\n   0129:             </table>\n   0130:         </div>\n   0131:     `;"
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js",
+      "line_no": 166,
+      "kind": "pattern",
+      "line": "`).join('')}",
+      "context": "   0161:                     <strong>${log.accion}</strong> - ${new Date(log.timestamp).toLocaleString()}<br>\n   0162:                     <small>Usuario: ${log.usuario}</small>\n   0163:                     ${log.campo_modificado ? `<div>Cambio en <i>${log.campo_modificado}</i>: <s>${log.valor_anterior}</s> → <b>${log.valor_nuevo}</b></div>` : ''}\n   0164:                     ${log.accion === 'CREATE' ? `<div style=\"font-size:0.75rem; color:var(--text-light)\">Datos iniciales: ${log.valor_nuevo}</div>` : ''}\n   0165:                 </div>\n>> 0166:             `).join('')}\n   0167:         </div>\n   0168:     `;\n   0169: }\n   0170: \n   0171: function renderCreateForm() {"
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js",
+      "line_no": 318,
+      "kind": "pattern",
+      "line": "`).join('')}",
+      "context": "   0313:                 <div>\n   0314:                     <strong>💡 Búsquedas sugeridas:</strong>\n   0315:                     <div class=\"ai-suggestions\">\n   0316:                         ${result.sugerencias.map(s => `\n   0317:                             <span class=\"suggestion-chip\" onclick=\"document.getElementById('ai-search-input').value='${s}'; performAISearch();\">${s}</span>\n>> 0318:                         `).join('')}\n   0319:                     </div>\n   0320:                 </div>\n   0321:             ` : ''}\n   0322:         </div>\n   0323: "
+    },
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js",
+      "line_no": 348,
+      "kind": "pattern",
+      "line": "`).join('')}",
+      "context": "   0343:                             <td>\n   0344:                                 <button class=\"btn-text\" onclick=\"loadDetail(${p.id})\">Ver</button>\n   0345:                                 <button class=\"btn-text\" onclick=\"analyzeWithAI(${p.id})\">🤖 Analizar</button>\n   0346:                             </td>\n   0347:                         </tr>\n>> 0348:                     `).join('')}\n   0349:                     ${procesos.length === 0 ? '<tr><td colspan=\"5\" style=\"text-align:center\">No se encontraron resultados</td></tr>' : ''}\n   0350:                 </tbody>\n   0351:             </table>\n   0352:         </div>\n   0353:     `;"
+    }
+  ],
+  "patches": [
+    {
+      "file": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js",
+      "line_no": 21,
+      "applied": true,
+      "message": "Patched C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\release\\ChechyLegis\\app\\_internal\\static\\app.js line 21: wrapped RHS with safeStringify(...)"
+    }
+  ],
+  "roadmap": [
+    {
+      "phase": "P0_LOCATE",
+      "goal": "Locate exact render line causing [object Object] in Settings UI",
+      "method": "Search for literal symptom and risky render patterns in settings-related files"
+    },
+    {
+      "phase": "P0_PATCH_MINIMAL",
+      "goal": "Patch only the exact offender line with safeStringify (temporary stopgap) OR replace with proper renderer",
+      "rule": "Only patch textContent/innerText assignments; avoid broad edits"
+    },
+    {
+      "phase": "VERIFY",
+      "goal": "Verify [object Object] is gone and Settings UI renders structured text",
+      "commands": [
+        "curl -i http://127.0.0.1:8000/settings | head -n 30",
+        "Open browser -> /settings -> search page for literal '[object Object]' (Ctrl+F)",
+        "Open DevTools Console -> confirm no new errors introduced"
+      ],
+      "pass_criteria": [
+        "No '[object Object]' appears in DOM text",
+        "Settings shows readable JSON (temporary) or proper table/list (final)",
+        "Console clean (no new errors)"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "step": "S1_fetch_settings_html_or_response",
+      "rc": 0,
+      "snippet": "<!DOCTYPE html>\n<html lang=\"es\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Archivo Virtual de Procesos Judiciales</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n    <link href=\"https://fonts.googleapis.com/css2?fam"
+    }
+  ],
+  "final_note": "Stopgap patch uses JSON.stringify to avoid [object Object]. Final UI should map objects to human fields (table rows). Next step: implement renderer for tokens/permissions instead of stringify."
+}

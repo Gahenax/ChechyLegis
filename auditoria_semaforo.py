@@ -9,6 +9,12 @@ from pathlib import Path
 from datetime import datetime
 import sqlite3
 from dotenv import load_dotenv
+import codecs
+
+# Force UTF-8 output for Windows terminals
+if sys.platform == "win32":
+    sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+    sys.stderr = codecs.getwriter("utf-8")(sys.stderr.detach())
 
 # Colores para terminal
 class Colors:
@@ -72,7 +78,7 @@ def check_env_config():
         # Verificar API Key
         api_key = os.getenv("GEMINI_API_KEY")
         if api_key and api_key != "tu_api_key_aqui":
-            print_status("🟢", "VERDE", "GEMINI_API_KEY", f"Configurada ({api_key[:10]}...{api_key[-5:]})")
+            print_status("🟢", "VERDE", "GEMINI_API_KEY", "Configurada (*****OCULTO*****)")
         elif api_key == "tu_api_key_aqui":
             print_status("🟡", "AMARILLO", "GEMINI_API_KEY", "Placeholder detectado - Configurar API key real")
         else:

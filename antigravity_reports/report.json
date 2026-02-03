@@ -1,0 +1,16 @@
+{
+  "status": "stop",
+  "why": "unexpected response",
+  "evidence": [
+    {
+      "step": "S1_GET_/settings",
+      "ok": true,
+      "details": "status=200, body_snip=<!DOCTYPE html>\r\n<html lang=\"es\">\r\n\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta name=\"viewport\" content=\"width=device"
+    },
+    {
+      "step": "S1_ASSERT_fastapi_404_shape",
+      "ok": false,
+      "details": "Not a FastAPI-like 404 or not 404. This script targets SPA route issue."
+    }
+  ]
+}
