@@ -11,6 +11,11 @@ from dotenv import load_dotenv
 from . import models, schemas, crud, database
 from .database import engine, get_db
 from .gemini_service import GeminiService
+import logging
+
+# Configure Logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -30,9 +35,9 @@ CRM_KEY = os.getenv("CRM_API_KEY", "")
 crm_service = None
 if CRM_URL and CRM_KEY:
     crm_service = CRMService(CRM_URL, CRM_KEY)
-    print(f"CRM Service activado: {CRM_URL}")
+    logger.info(f"CRM Service activado: {CRM_URL}")
 else:
-    print("CRM Service no configurado (Faltan variables de entorno)")
+    logger.info("CRM Service no configurado (Faltan variables de entorno)")
 
 app.add_middleware(
     CORSMiddleware,
@@ -77,7 +82,7 @@ def create_proceso(
             proceso_dict = schemas.ProcesoSchema.from_orm(new_proceso).dict()
             crm_service.sync_proceso(proceso_dict)
         except Exception as e:
-            print(f"Warning: No se pudo sincronizar con CRM: {e}")
+            logger.warning(f"No se pudo sincronizar con CRM: {e}")
             
     return new_proceso
 
