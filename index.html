@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAHENAX HUB | Lobby General</title>
+    <meta name="description"
+        content="Portal de acceso central a los proyectos y salas de GAHENAX. Sistema de gestión de identidad y acceso.">
+    <!-- Meta tags SEO -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #e2c275;
+            --gold-dark: #b8860b;
+            --gold-glow: rgba(226, 194, 117, 0.3);
+            --primary: #818cf8;
+            --bg-dark: #0a0a0c;
+            --card-bg: rgba(25, 25, 30, 0.4);
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --accent: #34d399;
+            --glass: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        @keyframes mesh-gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(129, 140, 248, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(226, 194, 117, 0.08) 0%, transparent 40%),
+                #0a0a0c;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(10, 10, 12, 0.7);
+        }
+
+        .brand-logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        .brand-logo span {
+            color: var(--gold);
+        }
+
+        .btn-checkin {
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 0.7rem 1.8rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+        }
+
+        .btn-checkin:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 25px var(--gold-glow);
+        }
+
+        /* --- Hero --- */
+        .hero {
+            padding: 14rem 5% 6rem;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero span.badge {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--gold);
+            margin-bottom: 2.5rem;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+
+        /* --- Room Grid --- */
+        .room-section {
+            padding: 4rem 5% 10rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .room-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 3.5rem 2.5rem;
+            position: relative;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .room-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            transform: translateX(-100%);
+            transition: 0.6s;
+        }
+
+        .room-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(226, 194, 117, 0.4);
+            background: rgba(30, 30, 35, 0.6);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .room-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .room-status {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+
+        .status-locked {
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.2);
+        }
+
+        .status-unlocked {
+            color: var(--accent);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .room-floor {
+            font-size: 0.75rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .room-card h3 {
+            font-size: 2.2rem;
+            margin-bottom: 1.2rem;
+            font-weight: 700;
+        }
+
+        .room-tagline {
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .room-features {
+            list-style: none;
+            margin-bottom: 3rem;
+            flex-grow: 1;
+        }
+
+        .room-features li {
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            color: #a1a1aa;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .room-features i {
+            color: var(--gold);
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .btn-enter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+        }
+
+        .room-card:hover .btn-enter {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+        }
+
+        footer {
+            padding: 6rem 5%;
+            background: #050505;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-brand .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 60px;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 1.5rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            color: #71717a;
+            list-style: none;
+        }
+
+        /* Modal Login */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: #0f1115;
+            padding: 4rem;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 2.5rem;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.6rem;
+            font-size: 0.7rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1.1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            color: white;
+            font-family: inherit;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--gold);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1.1rem;
+            background: var(--gold);
+            color: #000;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal {
+            animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav-actions" id="user-nav">
+        <!-- Acciones dinámicas de sesión -->
+        <button class="btn-checkin" onclick="openModal()" id="btn-login-main">Ingresar al Hotel</button>
+    </div>
+    </header>
+
+    <div id="user-welcome-section" class="reveal"
+        style="display:none; padding: 10rem 5% 0; max-width: 1200px; margin: 0 auto; text-align: left;">
+        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+            <div
+                style="width: 60px; height: 60px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-size: 1.5rem; font-weight: 700;">
+                <span id="user-initial">G</span>
+            </div>
+            <div>
+                <h2 style="font-size: 2.2rem; font-weight: 700;">Bienvenido, <span id="user-name-display">Guest</span>
+                </h2>
+                <p id="user-email-display" style="color: var(--text-dim); font-size: 0.9rem;"></p>
+            </div>
+        </div>
+        <div id="active-keys-container"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+            <!-- Active keys rendered here -->
+        </div>
+    </div>
+
+    <section class="hero reveal">
+        <span class="badge">Inspiración. Decisión. Resultado.</span>
+        <h1>Suite de Inteligencia Virtual<br>para el Profesional de Élite</h1>
+        <p>Bienvenido al Lobby Central de Gahenax. Explore nuestras habitaciones especializadas donde la tecnología y el
+            derecho convergen en precisión absoluta.</p>
+    </section>
+
+    <section class="room-section reveal" style="animation-delay: 0.2s;">
+        <div class="section-header">
+            <h2>Directorio de Habitaciones</h2>
+            <div style="color: var(--text-dim); font-size: 0.9rem">Piso 4: Legal & Strategy</div>
+        </div>
+
+        <div class="grid">
+            <!-- ChechyLegis Suite -->
+            <div class="room-card" onclick="enterRoom('chechylegis')">
+                <div class="room-status status-locked" id="status-chechylegis">
+                    <i class="fas fa-lock"></i> Bloqueada
+                </div>
+                <div class="room-floor">SUITE 101</div>
+                <h3>ChechyLegis</h3>
+                <p class="room-tagline">"Norma, prueba y decisión en una sola interfaz."</p>
+                <ul class="room-features">
+                    <li><i class="fas fa-check"></i> Análisis Penal por Capas</li>
+                    <li><i class="fas fa-check"></i> Jurisprudencia Dinámica</li>
+                    <li><i class="fas fa-check"></i> Simulación de Providencias</li>
+                </ul>
+                <div class="btn-enter" id="btn-chechylegis">
+                    Solicitar Acceso <i class="fas fa-key"></i>
+                </div>
+            </div>
+
+            <!-- Coming Soon: Contractus -->
+            <div class="room-card" style="opacity: 0.4; cursor: default;">
+                <div class="room-status status-locked">
+                    <i class="fas fa-clock"></i> Reservada
+                </div>
+                <div class="room-floor">SUITE 102</div>
+                <h3>Contractus-GA</h3>
+                <p class="room-tagline">Redacción inteligente de contratos civiles.</p>
+                <ul class="room-features">
+                    <li><i class="fas fa-minus"></i> Próximamente</li>
+                </ul>
+                <div class="btn-enter">En Construcción</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-brand">
+            <div class="logo">GAHENAX</div>
+            <p>High-End AI Solutions</p>
+        </div>
+        <div class="footer-links">
+            <div class="footer-col">
+                <h4>Gestión Institucional</h4>
+                <ul>
+                    <li>Recepción Central</li>
+                    <li>Centro de Soporte</li>
+                    <li>Estado de Red</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li>Términos de Estancia</li>
+                    <li>Privacidad de Datos</li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Guest Check-in</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email Corporativo</label>
+                    <input type="email" id="email" placeholder="usuario@gahenax.com">
+                </div>
+                <div class="form-group">
+                    <label>Llave de Acceso (Password)</label>
+                    <input type="password" id="password" placeholder="••••••••">
+                </div>
+                <button type="submit" class="auth-btn" aria-label="Confirmar acceso al hotel">ESTABLECER
+                    CONEXIÓN</button>
+            </form>
+            <div id="auth-status" style="margin-top: 1rem; text-align: center; font-size: 0.8rem; height: 1.2rem;">
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-dim);">¿No tiene llave? Contacte a
+                Recepción.</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "";
+
+        async function checkStatus() {
+            try {
+                const res = await fetch(`${API_BASE}/api/reception/me`);
+                if (res.ok) {
+                    const user = await res.json();
+                    const keysRes = await fetch(`${API_BASE}/api/reception/keys/mine`);
+                    const keys = keysRes.ok ? await keysRes.json() : [];
+                    renderUserSession(user, keys);
+
+                    // Specific room status for UI
+                    const roomRes = await fetch(`${API_BASE}/api/hotel/rooms/chechylegis`);
+                    if (roomRes.ok) {
+                        const roomData = await roomRes.json();
+                        updateRoomUI(roomData);
+                    }
+                }
+            } catch (err) {
+                console.log("Not logged in");
+            }
+        }
+
+        function renderUserSession(user, keys) {
+            document.getElementById('user-nav').innerHTML = `
+                <button class="btn-checkin" onclick="logout()">Check-out</button>
+            `;
+
+            document.getElementById('user-welcome-section').style.display = 'block';
+            document.getElementById('user-name-display').innerText = user.name || 'Huésped';
+            document.getElementById('user-email-display').innerText = user.email;
+            document.getElementById('user-initial').innerText = (user.name || 'G').charAt(0).toUpperCase();
+
+            const keysContainer = document.getElementById('active-keys-container');
+            if (keys.length > 0) {
+                keysContainer.innerHTML = keys.map(key => `
+                    <div style="background: var(--glass); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 4px;">
+                        <div style="color: var(--gold); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">Llave Activa</div>
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Habitación: ${key.room_id === 1 ? 'ChechyLegis' : 'Suite ' + key.room_id}</h4>
+                        <div style="font-size: 0.8rem; color: var(--text-dim);">Plan: ${key.plan.toUpperCase()}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-dim);">Expira: ${new Date(key.expires_at).toLocaleDateString()}</div>
+                    </div>
+                `).join('');
+            } else {
+                keysContainer.innerHTML = '<p style="color: var(--text-dim); font-size: 0.8rem;">No posee llaves activas en este momento.</p>';
+            }
+        }
+
+        async function logout() {
+            // Simple logout: clear cookie and reload
+            document.cookie = "gahenax_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            location.reload();
+        }
+
+        function updateRoomUI(data) {
+            const statusEl = document.getElementById('status-chechylegis');
+            const btnEl = document.getElementById('btn-chechylegis');
+
+            if (data.door_state === 'unlocked') {
+                statusEl.innerHTML = '<i class="fas fa-unlock"></i> Desbloqueada';
+                statusEl.className = 'room-status status-unlocked';
+                btnEl.innerHTML = 'Entrar a la Suite <i class="fas fa-door-open"></i>';
+            }
+        }
+
+        function openModal() {
+            document.getElementById('login-modal').style.display = 'flex';
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const res = await fetch(`${API_BASE}/api/reception/checkin`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (res.ok) {
+                location.reload();
+            } else {
+                alert("Credenciales inválidas. Por favor, verifique con la oficina.");
+            }
+        }
+
+        async function enterRoom(slug) {
+            const res = await fetch(`${API_BASE}/api/hotel/rooms/${slug}/enter`, { method: 'POST' });
+            const data = await res.json();
+
+            if (data.allowed) {
+                window.location.href = "/chechylegis";
+            } else {
+                alert("Acceso denegado: " + (data.reason || "Llave no válida"));
+                if (!data.reason) openModal();
+            }
+        }
+
+        // Close modal on outside click
+        window.onclick = function (event) {
+            const modal = document.getElementById('login-modal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleLogin();
+        });
+
+        checkStatus();
+    </script>
+</body>
+
+</html>
