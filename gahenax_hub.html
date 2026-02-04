@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAHENAX | Download Center</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --bg-dark: #020617;
+            --card-bg: rgba(30, 41, 59, 0.5);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* --- Background Animation --- */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .brand-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo span {
+            color: var(--primary);
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* --- Hero --- */
+        .hero {
+            padding: 8rem 5% 4rem;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        /* --- Tool Grid --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 4rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--primary-glow);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card-tag {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            background: var(--primary);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            height: 60px;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .btn-download:hover {
+            background: var(--primary-dark);
+            filter: brightness(1.2);
+        }
+
+        .btn-disabled {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+            cursor: not-allowed;
+        }
+
+        .checksum {
+            margin-top: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.75rem;
+            border-radius: 8px;
+            color: var(--accent);
+            word-break: break-all;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        footer {
+            padding: 4rem 5%;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 4rem;
+            color: var(--text-dim);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal {
+            animation: fadeIn 1s ease forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+
+    <header>
+        <div class="brand-logo">
+            <i class="fas fa-microchip" style="color:var(--primary)"></i>
+            GAHENAX<span>FORCE</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-dim);">
+            Legal Tech Solutions
+        </div>
+    </header>
+
+    <section class="hero reveal">
+        <h1>Centro de Inteligencia Judicial</h1>
+        <p>Herramientas de vanguardia diseñadas para potenciar la práctica legal y la gestión de procesos con
+            Inteligencia Artificial.</p>
+    </section>
+
+    <div class="grid">
+        <!-- ChechyLegis Card -->
+        <div class="card reveal" style="animation-delay: 0.2s;">
+            <div class="card-tag">v1.0.0-FREE</div>
+            <div class="card-icon"><i class="fas fa-folder-tree"></i></div>
+            <h3>ChechyLegis</h3>
+            <p>Archivo virtual inteligente de procesos judiciales. Análisis penal preliminar asistido por Google Gemini
+                y gestión de expedientes local.</p>
+            <a href="ChechyLegis_FREE_1.0.0-FREE.zip" class="btn-download">
+                <i class="fas fa-download"></i> Descargar Edición Libre
+            </a>
+            <div class="checksum">
+                <i class="fas fa-shield-alt"></i> SHA256:<br>
+                06004C6BBDA4B920C5DECF9EB7F... (Verificar en SHA256_FREE.txt)
+            </div>
+        </div>
+
+        <!-- Future Tool 1 -->
+        <div class="card reveal" style="animation-delay: 0.4s; opacity: 0.6;">
+            <div class="card-tag" style="background:#475569;">PRÓXIMAMENTE</div>
+            <div class="card-icon"><i class="fas fa-file-signature"></i></div>
+            <h3>Contractus-GA</h3>
+            <p>Redactor y auditor de contratos civiles con detección de cláusulas abusivas mediante análisis semántico
+                profundo.</p>
+            <a href="#" class="btn-download btn-disabled">
+                <i class="fas fa-lock"></i> No disponible aún
+            </a>
+        </div>
+
+        <!-- Future Tool 2 -->
+        <div class="card reveal" style="animation-delay: 0.6s; opacity: 0.6;">
+            <div class="card-tag" style="background:#475569;">DESARROLLO</div>
+            <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
+            <h3>Iustitia-Scan</h3>
+            <p>Escaneo masivo de expedientes PDF con OCR y extracción automática de hitos procesales importantes.</p>
+            <a href="#" class="btn-download btn-disabled">
+                <i class="fas fa-clock"></i> En fase Beta
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 GAHENAX / José de Ávila. Todos los derechos reservados.</p>
+        <p style="font-size: 0.75rem; margin-top: 0.5rem;">Innovación Legal con base en Python & Google AI.</p>
+    </footer>
+
+    <script>
+        // Simple reveal on scroll simulation
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = "0";
+                setTimeout(() => {
+                    card.style.opacity = "1";
+                    card.style.transition = "opacity 0.8s ease-out, transform 0.8s ease-out";
+                }, 200 * index);
+            });
+        });
+    </script>
+</body>
+
+</html>
