@@ -81,3 +81,20 @@ class ProcessDocument(Base):
     link_reason = Column(Enum(LinkReason), nullable=False)
     confidence = Column(Float, nullable=True)  # Para asociaciones con IA
 
+class FileRecord(Base):
+    """Contrato de almacenamiento persistente para Legischechy"""
+    __tablename__ = "file_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    file_id = Column(String, unique=True, index=True, nullable=False)
+    user_id = Column(String, index=True, nullable=False)
+    name = Column(String, nullable=False)
+    path = Column(String, nullable=False)  # Ruta relativa dentro del sandbox
+    mime_type = Column(String)
+    size_bytes = Column(Integer)
+    sha256 = Column(String(64), index=True)
+    status = Column(String, default="active") # active, trashed, deleted
+    labels = Column(Text, default="[]") # Almacenado como JSON string
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())
+

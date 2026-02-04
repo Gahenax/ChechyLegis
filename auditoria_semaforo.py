@@ -30,7 +30,7 @@ class Colors:
 def print_header():
     """Imprime el encabezado de la auditoría"""
     print("\n" + "="*70)
-    print(f"{Colors.BOLD}{Colors.CYAN}🚦 AUDITORÍA SEMÁFORO - SISTEMA DE ARCHIVO JUDICIAL{Colors.END}")
+    print(f"{Colors.BOLD}{Colors.CYAN}🚦 AUDITORÍA SEMÁFORO - JULES (SISTEMA DE ARCHIVO JUDICIAL){Colors.END}")
     print("="*70)
     print(f"📅 Fecha: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("="*70 + "\n")
@@ -91,6 +91,17 @@ def check_env_config():
         else:
             print_status("🟡", "AMARILLO", "DATABASE_URL", "No configurada, usando default")
 
+        # Verificar CRM Config
+        crm_url = os.getenv("CRM_API_URL")
+        crm_key = os.getenv("CRM_API_KEY")
+        
+        if crm_url and crm_key:
+             print_status("🟢", "VERDE", "CRM_CONFIG", f"Configurado: {crm_url}")
+        elif crm_url or crm_key:
+             print_status("🟡", "AMARILLO", "CRM_CONFIG", "Parcialmente configurado (Faltan variables)")
+        else:
+             print_status("⚪", "GRIS", "CRM_CONFIG", "No configurado (Opcional)")
+
 def check_project_structure():
     """Verifica la estructura del proyecto"""
     print_section("📁 2. ESTRUCTURA DEL PROYECTO")
@@ -105,8 +116,10 @@ def check_project_structure():
         "static/index.html",
         "static/styles.css",
         "static/app.js",
+        "static/app.js",
         "requirements.txt",
-        "README.md"
+        "README.md",
+        "app/crm_service.py"
     ]
     
     optional_files = [
@@ -193,7 +206,7 @@ def check_database():
         
         print(f"{Colors.BOLD}Tablas encontradas:{Colors.END}")
         
-        required_tables = ["procesos", "audit_logs"]
+        required_tables = ["procesos", "audit_log"]
         for table in required_tables:
             if table in table_names:
                 # Contar registros
@@ -327,6 +340,20 @@ def main():
         check_database()
         check_code_quality()
         check_documentation()
+        
+        # Verificar CRM Connectivity si está configurado
+        if os.getenv("CRM_API_URL") and os.getenv("CRM_API_KEY"):
+             try:
+                 print_section("🤝 7. INTEGRACIÓN CRM")
+                 from app.crm_service import CRMService
+                 crm = CRMService(os.getenv("CRM_API_URL"), os.getenv("CRM_API_KEY"))
+                 if crm.check_health():
+                     print_status("🟢", "VERDE", "Conexión CRM", "Establecida correctamente")
+                 else:
+                     print_status("🔴", "ROJO", "Conexión CRM", "Falló el health check")
+             except Exception as e:
+                 print_status("🔴", "ROJO", "Error CRM", str(e))
+        
         generate_summary()
         
     except KeyboardInterrupt:

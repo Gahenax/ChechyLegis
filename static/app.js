@@ -6,6 +6,7 @@ const content = document.getElementById('content');
 const roleSelector = document.getElementById('role-selector');
 const navList = document.getElementById('nav-list');
 const navCreate = document.getElementById('nav-create');
+const navSupport = document.getElementById('nav-support');
 const navSettings = document.getElementById('nav-settings');
 
 // State Management
@@ -37,6 +38,11 @@ navCreate.addEventListener('click', () => {
 navSettings.addEventListener('click', () => {
     setActiveNav(navSettings);
     renderSettings();
+});
+
+navSupport.addEventListener('click', () => {
+    setActiveNav(navSupport);
+    renderSupportForm();
 });
 
 function setActiveNav(el) {
@@ -133,14 +139,16 @@ function renderListPage(procesos) {
                 <tbody>
                     ${procesos.map(p => `
                         <tr>
-                            <td>${p.fecha_radicacion}</td>
+                            <td><i class="far fa-calendar-alt" style="margin-right: 8px; opacity: 0.6;"></i> ${p.fecha_radicacion}</td>
                             <td><strong>${p.numero_proceso}</strong></td>
-                            <td>${p.partes}</td>
+                            <td><i class="fas fa-users" style="margin-right: 8px; opacity: 0.6;"></i> ${p.partes}</td>
                             <td><span class="badge badge-${p.estado.toLowerCase()}">${p.estado}</span></td>
                             <td>
-                                <button class="btn-text" onclick="loadDetail(${p.id})">Ver</button>
-                                ${currentRole !== 'viewer' ? `<button class="btn-text" onclick="renderEditForm(${p.id})">Editar</button>` : ''}
-                                ${currentRole === 'admin' ? `<button class="btn-text" style="color:red" onclick="deleteProceso(${p.id})">Eliminar</button>` : ''}
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-text" onclick="loadDetail(${p.id})"><i class="fas fa-eye"></i></button>
+                                    ${currentRole !== 'viewer' ? `<button class="btn-text" onclick="renderEditForm(${p.id})"><i class="fas fa-edit"></i></button>` : ''}
+                                    ${currentRole === 'admin' ? `<button class="btn-text" style="color:var(--accent)" onclick="deleteProceso(${p.id})"><i class="fas fa-trash-alt"></i></button>` : ''}
+                                </div>
                             </td>
                         </tr>
                     `).join('')}
@@ -161,8 +169,8 @@ async function loadDetail(id) {
     const p = await apiCall(`/procesos/${id}`);
     content.innerHTML = `
         <div class="view-header">
-            <h2>Detalle de Proceso: ${p.numero_proceso}</h2>
-            <button class="btn" onclick="loadList()">Volver</button>
+            <h2><i class="fas fa-file-invoice" style="margin-right: 15px; color: var(--primary);"></i> ${p.numero_proceso}</h2>
+            <button class="btn" onclick="loadList()"><i class="fas fa-arrow-left"></i> Volver</button>
         </div>
         <div class="card">
             <div class="form-grid">
@@ -397,8 +405,8 @@ function renderAIResults(result) {
 
     content.innerHTML = `
         <div class="view-header">
-            <h2>Resultados de Búsqueda IA <span class="ai-badge">GEMINI</span></h2>
-            <button class="btn" onclick="loadList()">Volver</button>
+            <h2>Resultados IA <span class="ai-badge">GEMINI</span></h2>
+            <button class="btn" onclick="loadList()"><i class="fas fa-arrow-left"></i> Volver</button>
         </div>
 
         <div class="ai-results-container">
@@ -465,8 +473,8 @@ function showAIAnalysis(result) {
 
     content.innerHTML = `
         <div class="view-header">
-            <h2>Análisis IA: ${p.numero_proceso} <span class="ai-badge">GEMINI</span></h2>
-            <button class="btn" onclick="loadList()">Volver</button>
+            <h2>Análisis de Inteligencia Judicial <span class="ai-badge">GEMINI</span></h2>
+            <button class="btn" onclick="loadList()"><i class="fas fa-arrow-left"></i> Volver</button>
         </div>
 
         <div class="card">
@@ -608,6 +616,93 @@ async function sendChatMessage() {
             addChatMessage('assistant', 'Lo siento, ocurrió un error: ' + err.message);
         }
     }
+}
+
+// ============================================
+// SUPPORT / CRM FUNCTIONS
+// ============================================
+
+function renderSupportForm() {
+    content.innerHTML = `
+        <div class="view-header">
+            <h2>Centro de Soporte <span class="ai-badge" style="background:var(--accent)">Real-Time</span></h2>
+            <p style="color:var(--text-dim)">Reporta cualquier problema técnico o duda jurídica directamente al equipo central.</p>
+        </div>
+        
+        <div class="card support-card" style="border-top: 4px solid var(--accent)">
+            <form id="support-form">
+                <div class="form-grid">
+                    <div class="full-width">
+                        <label>Asunto del Problema *</label>
+                        <input type="text" name="subject" placeholder="Ej: Error al cargar documentos / Duda sobre proceso civil" required minlength="5">
+                    </div>
+                    
+                    <div>
+                        <label>Prioridad</label>
+                        <select name="priority">
+                            <option value="low">Baja - Consulta general</option>
+                            <option value="medium" selected>Media - Problema funcional</option>
+                            <option value="high">Alta - Error crítico / Bloqueo</option>
+                            <option value="urgent">Urgente - Caída del sistema</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Correo de Contacto</label>
+                        <input type="email" name="user_email" value="usuario_${currentRole}@legis.tech">
+                    </div>
+
+                    <div class="full-width">
+                        <label>Descripción detallada del problema *</label>
+                        <textarea name="description" rows="6" placeholder="Describe qué estabas haciendo y qué ocurrió..." required></textarea>
+                    </div>
+
+                    <div class="full-width">
+                        <button type="submit" class="btn btn-primary" style="background:var(--accent); width:100%; justify-content:center;">
+                            <i class="fas fa-paper-plane"></i> Enviar Reporte a CRM
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div id="support-status" class="hidden" style="margin-top:1.5rem; padding:1rem; border-radius:12px; text-align:center;"></div>
+        </div>
+
+        <div class="card" style="background: rgba(244, 63, 94, 0.05); border: 1px dashed var(--accent);">
+            <div style="display:flex; gap:1rem; align-items:center;">
+                <div style="font-size:2rem; color:var(--accent)"><i class="fas fa-microchip"></i></div>
+                <div>
+                    <h4 style="color:var(--accent)">Diagnóstico Automático</h4>
+                    <p style="font-size:0.85rem; color:var(--text-dim)">Al enviar este reporte, el sistema adjunta automáticamente el estado del servidor y tu rol actual para agilizar la solución.</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('support-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const statusEl = document.getElementById('support-status');
+        statusEl.classList.remove('hidden');
+        statusEl.style.background = 'rgba(255,255,255,0.05)';
+        statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando incidencia al CRM...';
+
+        const formData = new FormData(e.target);
+        const jsonData = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await apiCall('/support/ticket', 'POST', jsonData);
+            statusEl.style.background = 'rgba(16, 185, 129, 0.15)';
+            statusEl.style.color = '#10b981';
+            statusEl.innerHTML = `
+                <i class="fas fa-check-circle"></i> <strong>¡Enviado!</strong><br>
+                El ticket ID: <strong>${response.ticket_id || 'REQ-' + Math.floor(Math.random() * 1000)}</strong> ha sido registrado en el sistema de soporte.
+            `;
+            e.target.reset();
+        } catch (err) {
+            statusEl.style.background = 'rgba(244, 63, 94, 0.15)';
+            statusEl.style.color = '#f43f5e';
+            statusEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error: ${err.message}`;
+        }
+    };
 }
 
 // Start

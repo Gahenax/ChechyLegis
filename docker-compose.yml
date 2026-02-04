@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  legischechy-api:
+    build: .
+    container_name: legischechy-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - legischechy-data:/var/lib/legischechy/files
+      - ./judicial_archive.db:/app/judicial_archive.db
+    environment:
+      - PORT=8000
+      - FILES_ROOT=/var/lib/legischechy/files
+      - JWT_SECRET=${JWT_SECRET:-super-secret-key}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    restart: always
+
+volumes:
+  legischechy-data:
+    driver: local

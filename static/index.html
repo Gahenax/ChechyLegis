@@ -4,54 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archivo Virtual de Procesos Judiciales</title>
+    <title>ChechyLegis | Archivo Judicial Inteligente</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
     <div class="app-container">
-        <header>
-            <div class="logo">
-                <h1>Justicia<span>Virtual</span></h1>
+        <nav class="sidebar">
+            <div class="brand">
+                <div class="logo">
+                    <h1>Justicia<span>Virtual</span></h1>
+                </div>
             </div>
+            <ul>
+                <li><a href="#" id="nav-list" class="active"><i class="fas fa-folder-open"></i>
+                        <span>Procesos</span></a>
+                </li>
+                <li><a href="#" id="nav-create"><i class="fas fa-plus-circle"></i> <span>Registrar</span></a></li>
+                <li><a href="#" id="nav-support"><i class="fas fa-headset"></i> <span>Soporte</span></a></li>
+                <li><a href="#" id="nav-settings"><i class="fas fa-cog"></i> <span>Ajustes</span></a></li>
+            </ul>
+
+            <div class="sidebar-footer"
+                style="margin-top: auto; padding-top: 2rem; font-size: 0.75rem; color: var(--text-dim);">
+                <p>&copy; 2026 ChechyLegis S.A.S.</p>
+            </div>
+        </nav>
+
+        <header>
             <div class="ai-search-container">
-                <input type="text" id="ai-search-input"
-                    placeholder="🤖 Búsqueda inteligente: 'procesos activos de enero'..." />
-                <button class="btn btn-primary" onclick="performAISearch()">Buscar con IA</button>
+                <i class="fas fa-robot"
+                    style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--primary);"></i>
+                <input type="text" id="ai-search-input" style="padding-left: 2.8rem;"
+                    placeholder="Búsqueda inteligente: 'procesos activos de enero'..." />
+                <button class="btn btn-primary" onclick="performAISearch()">
+                    <i class="fas fa-search"></i> IA
+                </button>
             </div>
             <div class="user-controls">
-                <span id="current-user-display">Usuario: Admin</span>
+                <div class="user-info">
+                    <span id="current-user-display" style="font-weight: 500;">Admin</span>
+                </div>
                 <select id="role-selector">
-                    <option value="admin" selected>Admin (Total)</option>
-                    <option value="operator">Operator (Crea/Edita)</option>
-                    <option value="viewer">Viewer (Solo lectura)</option>
+                    <option value="admin">Administrador</option>
+                    <option value="operator">Operador</option>
+                    <option value="viewer">Consultor</option>
                 </select>
             </div>
         </header>
 
-        <div class="main-layout">
-            <nav class="sidebar">
-                <ul>
-                    <li><a href="#" id="nav-list" class="active">Listado de Procesos</a></li>
-                    <li><a href="#" id="nav-create">Registrar Proceso</a></li>
-                    <li><a href="#" id="nav-settings">Configuración</a></li>
-                </ul>
-            </nav>
-
-            <main id="content">
-                <!-- Content will be injected here -->
-            </main>
-        </div>
-        <footer
-            style="margin-top: auto; padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.8rem; border-top: 1px solid var(--border);">
-            <p>
-                &copy; 2026 ChechyLegis S.A.S. |
-                <a href="#" onclick="alert('Términos y Condiciones: Uso justo y confidencial.')">Términos y
-                    Condiciones</a> |
-                <a href="#" onclick="alert('Política de Privacidad: Sus datos residen localmente.')">Privacidad</a>
-            </p>
-        </footer>
+        <main id="content">
+            <!-- Content injected here -->
+        </main>
     </div>
 
     <!-- Modals -->
@@ -65,21 +73,25 @@
     <!-- AI Chat Widget -->
     <div id="ai-chat-widget" class="chat-widget hidden">
         <div class="chat-header">
-            <h3>🤖 Asistente Legal IA</h3>
-            <button onclick="toggleChat()">&times;</button>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-robot"></i>
+                <h3>Asistente ChechyIA</h3>
+            </div>
+            <button onclick="toggleChat()" style="background: none; border: none; color: white; cursor: pointer;"><i
+                    class="fas fa-times"></i></button>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-container">
-            <input type="text" id="chat-input" placeholder="Escribe tu consulta..."
+            <input type="text" id="chat-input" placeholder="Pregunta algo sobre tus expedientes..."
                 onkeypress="if(event.key==='Enter') sendChatMessage()" />
-            <button onclick="sendChatMessage()">Enviar</button>
+            <button onclick="sendChatMessage()" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <!-- Chat Toggle Button -->
-    <button class="chat-toggle-btn" onclick="toggleChat()">
-        💬 Asistente IA
-    </button>
+    <div class="chat-toggle-btn" onclick="toggleChat()">
+        <i class="fas fa-comment-dots" style="font-size: 1.5rem;"></i>
+    </div>
 
     <script src="app.js"></script>
 </body>

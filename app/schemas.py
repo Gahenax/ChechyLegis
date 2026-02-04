@@ -3,6 +3,44 @@ from datetime import date, datetime
 from typing import Optional, List
 from .models import EstadoProceso, CuantiaTipo, ExtractionStatus, LinkReason
 
+# ============================================
+# SCHEMAS DE ERROR ESTÁNDAR
+# ============================================
+
+class ErrorDetail(BaseModel):
+    code: str
+    message: str
+    details: Optional[dict] = None
+
+class APIError(BaseModel):
+    error: ErrorDetail
+
+# ============================================
+# SCHEMAS DE ARCHIVOS (Legischechy Contract)
+# ============================================
+
+class FileMeta(BaseModel):
+    file_id: str
+    name: str
+    path: str
+    mime_type: str
+    size_bytes: int
+    sha256: str
+    created_at: datetime
+    updated_at: datetime
+    labels: List[str] = []
+
+class FolderCreate(BaseModel):
+    path: str = Field(..., example="cases/proc_2026_0001")
+
+class FileMove(BaseModel):
+    file_id: str
+    to_path: str
+
+class FileRename(BaseModel):
+    file_id: str
+    new_name: str
+
 class ProcesoBase(BaseModel):
     numero_proceso: str
     fecha_radicacion: date
@@ -98,4 +136,24 @@ class LinkDocumentResponse(BaseModel):
     message: str
     process_id: Optional[int] = None
     document_id: int
+
+# ============================================
+# SCHEMAS DE SOPORTE / CRM
+# ============================================
+
+class SupportTicket(BaseModel):
+    subject: str = Field(..., min_length=5)
+    description: str
+    priority: str = "medium"
+    user_email: Optional[str] = "anon@legis.tech"
+
+# ============================================
+# LEGAL / SAFETY (Analysis Response)
+# ============================================
+
+class AnalysisResponse(BaseModel):
+    analysis: str
+    hypothesis: List[str] = []
+    confidence: str = Field(..., description="green/yellow/red")
+    disclaimer: str = "ESTE ANÁLISIS ES PRELIMINAR, NO CONSTITUYE ASESORÍA LEGAL DEFINITIVA Y NO GARANTIZA RESULTADOS. CONSULTE CON UN ABOGADO TITULADO."
 

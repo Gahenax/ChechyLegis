@@ -9,36 +9,49 @@ from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
 
-from . import models, schemas, crud, database
+from .storage_service import StorageService
+from . import storage_utils, models, schemas, database
 from .database import engine, get_db
-from .gemini_service import GeminiService
-import logging
-
-# Configure Logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi import UploadFile, File as FastAPIFile
 
 load_dotenv()
 
+# --- CONFIGURACIÓN LEGISCHECHY ---
+FILES_ROOT = os.getenv("FILES_ROOT", os.path.join(os.getcwd(), "storage"))
+JWT_SECRET = os.getenv("JWT_SECRET", "super-secret-key")
+security = HTTPBearer()
+
+os.makedirs(FILES_ROOT, exist_ok=True)
+
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Archivo Virtual de Procesos Judiciales")
+app = FastAPI(title="LEGISCHECHY API (Colombian Criminal Law Assistant)")
 
-# Inicializar servicio de Gemini
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-gemini_service = GeminiService(GEMINI_API_KEY) if GEMINI_API_KEY else None
+# Dependency for Storage
+def get_storage(db: Session = Depends(get_db)):
+    return StorageService(db, FILES_ROOT)
 
-# Inicializar servicio CRM
-from .crm_service import CRMService
-CRM_URL = os.getenv("CRM_API_URL", "")
-CRM_KEY = os.getenv("CRM_API_KEY", "")
+# --- AUTH STUB & RBAC ---
+def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security)):
+    # Simulación de JWT Bearer - En producción validar JWT real
+    token = auth.credentials
+    if token == "admin-token":
+        return {"id": "admin_user", "role": "admin", "name": "Administrador"}
+    elif token == "operator-token":
+        return {"id": "op_user", "role": "operator", "name": "Operador Legal"}
+    return {"id": "viewer_user", "role": "viewer", "name": "Consultor"}
 
-crm_service = None
-if CRM_URL and CRM_KEY:
-    crm_service = CRMService(CRM_URL, CRM_KEY)
-    logger.info(f"CRM Service activado: {CRM_URL}")
-else:
-    logger.info("CRM Service no configurado (Faltan variables de entorno)")
+def rbac_required(allowed_roles: List[str]):
+    def checker(user: dict = Depends(get_current_user)):
+        if user["role"] not in allowed_roles:
+            return JSONResponse(
+                status_code=403,
+                content={"error": {"code": "FORBIDDEN", "message": "Rol insuficiente"}}
+            )
+        return user
+    return checker
 
 app.add_middleware(
     CORSMiddleware,
@@ -98,14 +111,7 @@ def create_proceso(
         raise HTTPException(status_code=400, detail="El número de proceso ya existe")
     new_proceso = crud.create_proceso(db=db, proceso=proceso, usuario=user["name"])
     
-    # Sincronizar con CRM si está activo (Fire & Forget idealmente, aquí síncrono por simplicidad)
-    if crm_service:
-        try:
-            proceso_dict = schemas.ProcesoSchema.from_orm(new_proceso).dict()
-            crm_service.sync_proceso(proceso_dict)
-        except Exception as e:
-            logger.warning(f"No se pudo sincronizar con CRM: {e}")
-            
+    # El CRM ahora solo recibe reportes de problemas manuales vía /api/support/ticket
     return new_proceso
 
 @app.get("/api/procesos", response_model=List[schemas.ProcesoSchema])
@@ -160,148 +166,110 @@ def delete_proceso(
         raise HTTPException(status_code=404, detail="Proceso no encontrado")
     return {"detail": "Proceso eliminado (soft delete)"}
 
-# ============================================
-# ENDPOINTS DE IA CON GEMINI
-# ============================================
-
-class NaturalQueryRequest(BaseModel):
-    query: str
-
-class ChatRequest(BaseModel):
-    message: str
-    context: Optional[dict] = None
-
-@app.post("/api/ai/search")
-def natural_language_search(
-    request: NaturalQueryRequest,
-    db: Session = Depends(get_db),
+# ---------------------------------------------------------
+# SOPORTE EN TIEMPO REAL (CRM INCIDENTS)
+# ---------------------------------------------------------
+@app.post("/api/support/ticket")
+def create_support_ticket(
+    ticket: schemas.SupportTicket,
     user: dict = Depends(get_current_user_role)
 ):
     """
-    Búsqueda en lenguaje natural usando Gemini
-    Ejemplo: "procesos activos de enero" o "casos de María García"
+    Reporta un problema o incidencia al CRM en tiempo real.
     """
-    if not gemini_service:
-        raise HTTPException(status_code=503, detail="Servicio de IA no disponible. Configure GEMINI_API_KEY")
+    if not crm_service:
+         raise HTTPException(status_code=503, detail="Servicio de soporte no configurado")
     
-    # Obtener todos los procesos para contexto
-    all_procesos = crud.get_procesos(db, 0, 1000)
-    procesos_dict = [schemas.ProcesoSchema.from_orm(p).dict() for p in all_procesos]
-    
-    # Analizar consulta con Gemini
-    result = gemini_service.parse_natural_query(request.query, procesos_dict)
-    
-    # Aplicar filtros interpretados
-    filtros = result.get("filtros", {})
-    filtered_procesos = crud.get_procesos(
-        db, 
-        0, 
-        100,
-        fecha_desde=filtros.get("fecha_desde"),
-        fecha_hasta=filtros.get("fecha_hasta"),
-        estado=filtros.get("estado"),
-        numero_proceso=filtros.get("numero_proceso")
-    )
-    
-    return {
-        "query_original": request.query,
-        "interpretacion": result.get("interpretacion"),
-        "filtros_aplicados": filtros,
-        "resultados": [schemas.ProcesoSchema.from_orm(p).dict() for p in filtered_procesos],
-        "total_resultados": len(filtered_procesos),
-        "sugerencias": result.get("sugerencias", [])
-    }
-
-@app.get("/api/ai/analyze/{proceso_id}")
-def analyze_proceso(
-    proceso_id: int,
-    db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user_role)
-):
-    """
-    Analiza un proceso usando IA y genera insights automáticos
-    """
-    if not gemini_service:
-        raise HTTPException(status_code=503, detail="Servicio de IA no disponible. Configure GEMINI_API_KEY")
-    
-    proceso = crud.get_proceso(db, proceso_id)
-    if not proceso:
-        raise HTTPException(status_code=404, detail="Proceso no encontrado")
-    
-    proceso_dict = schemas.ProcesoSchema.from_orm(proceso).dict()
-    analysis = gemini_service.analyze_proceso(proceso_dict)
-    
-    return {
-        "proceso": proceso_dict,
-        "analisis": analysis
-    }
-
-@app.get("/api/ai/similar/{proceso_id}")
-def find_similar_cases(
-    proceso_id: int,
-    limit: int = 5,
-    db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user_role)
-):
-    """
-    Encuentra casos similares usando análisis semántico de IA
-    """
-    if not gemini_service:
-        raise HTTPException(status_code=503, detail="Servicio de IA no disponible. Configure GEMINI_API_KEY")
-    
-    proceso = crud.get_proceso(db, proceso_id)
-    if not proceso:
-        raise HTTPException(status_code=404, detail="Proceso no encontrado")
-    
-    all_procesos = crud.get_procesos(db, 0, 1000)
-    procesos_dict = [schemas.ProcesoSchema.from_orm(p).dict() for p in all_procesos]
-    proceso_dict = schemas.ProcesoSchema.from_orm(proceso).dict()
-    
-    similar = gemini_service.find_similar_cases(proceso_dict, procesos_dict, limit)
-    
-    return {
-        "proceso_referencia": proceso_dict,
-        "casos_similares": similar,
-        "total_encontrados": len(similar)
-    }
-
-@app.post("/api/ai/chat")
-def chat_assistant(
-    request: ChatRequest,
-    user: dict = Depends(get_current_user_role)
-):
-    """
-    Asistente conversacional para consultas generales sobre el sistema
-    """
-    if not gemini_service:
-        raise HTTPException(status_code=503, detail="Servicio de IA no disponible. Configure GEMINI_API_KEY")
-    
-    response = gemini_service.chat_assistant(request.message, request.context)
-    
-    return {
-        "mensaje_usuario": request.message,
-        "respuesta": response
-    }
-
-# Static files for frontend
-@app.get("/", include_in_schema=False)
-async def serve_root():
-    return FileResponse("static/index.html")
-
-@app.get("/{full_path:path}", include_in_schema=False)
-async def serve_spa_or_static(full_path: str):
-    # Seguridad básica contra directory traversal
-    if ".." in full_path:
-         raise HTTPException(status_code=404)
-         
-    # 1. Intentar servir archivo estático exacto
-    static_file_path = os.path.join("static", full_path)
-    if os.path.isfile(static_file_path):
-        return FileResponse(static_file_path)
-    
-    # 2. Si es API, dejar que sea 404 real (aunque las rutas API definidas arriba tienen precedencia)
-    if full_path.startswith("api/"):
-        raise HTTPException(status_code=404, detail="Not Found")
+    result = crm_service.report_incident(ticket.dict())
+    if not result:
+        raise HTTPException(status_code=500, detail="No se pudo enviar el reporte de soporte")
         
-    # 3. Fallback a index.html para rutas de SPA (ej: /settings, /login)
-    return FileResponse("static/index.html")
+    return {"status": "success", "ticket_id": result.get("id"), "message": "Reporte enviado correctamente"}
+
+# ---------------------------------------------------------
+# CONTRATO DE ARCHIVOS (LEGISCHECHY)
+# ---------------------------------------------------------
+
+@app.post("/api/files/folders", tags=["Files"])
+def create_folder(
+    folder: schemas.FolderCreate,
+    user: dict = Depends(rbac_required(["operator", "admin"])),
+    storage: StorageService = Depends(get_storage)
+):
+    storage_utils.ensure_user_layout(FILES_ROOT, user["id"])
+    success = storage.create_folder(user["id"], folder.path)
+    if not success:
+        return JSONResponse(status_code=400, content={"error": {"code": "PATH_INVALID", "message": "Ruta inválida o fuera de sandbox"}})
+    return {"status": "success", "path": folder.path}
+
+@app.get("/api/files/folders", tags=["Files"])
+def list_files(
+    path: str = Query("", description="Ruta relativa para listar"),
+    user: dict = Depends(get_current_user),
+    storage: StorageService = Depends(get_storage)
+):
+    records = storage.list_files(user["id"], path)
+    return records
+
+@app.post("/api/files/upload", tags=["Files"])
+async def upload_file(
+    path: str = FastAPIFile(...),
+    file: UploadFile = FastAPIFile(...),
+    user: dict = Depends(rbac_required(["operator", "admin"])),
+    storage: StorageService = Depends(get_storage)
+):
+    content = await file.read()
+    record = storage.upload_file(user["id"], path, file.filename, content, file.content_type)
+    if not record:
+        return JSONResponse(status_code=400, content={"error": {"code": "UPLOAD_FAILED", "message": "Error al guardar el archivo"}})
+    return record
+
+@app.get("/api/files/download/{file_id}", tags=["Files"])
+def download_file(
+    file_id: str,
+    user: dict = Depends(get_current_user),
+    storage: StorageService = Depends(get_storage)
+):
+    path = storage.get_file_path(user["id"], file_id)
+    if not path or not path.exists():
+        return JSONResponse(status_code=404, content={"error": {"code": "FILE_NOT_FOUND", "message": "Archivo no existe"}})
+    return FileResponse(path)
+
+@app.post("/api/files/trash", tags=["Files"])
+def trash_file(
+    request: dict,
+    user: dict = Depends(rbac_required(["operator", "admin"])),
+    storage: StorageService = Depends(get_storage)
+):
+    file_id = request.get("file_id")
+    success = storage.move_to_trash(user["id"], file_id)
+    if not success:
+        return JSONResponse(status_code=400, content={"error": {"code": "TRASH_FAILED", "message": "No se pudo mover a la papelera"}})
+    return {"status": "success"}
+
+# ---------------------------------------------------------
+# ANÁLISIS PENAL (LEGISCHECHY)
+# ---------------------------------------------------------
+@app.post("/api/analysis/criminal", response_model=schemas.AnalysisResponse, tags=["Criminal Law"])
+def analyze_criminal_case(
+    query: str = Query(...),
+    user: dict = Depends(get_current_user)
+):
+    """
+    Análisis preliminar de casos penales colombianos con IA.
+    """
+    # Stub de respuesta - En productivo invocar a GeminiService
+    return {
+        "analysis": f"Análisis preliminar para: {query}. Basado en el Código Penal Colombiano...",
+        "hypothesis": ["Posible tipicidad bajo Art 239", "Circunstancia de atenuación probable"],
+        "confidence": "yellow",
+        "disclaimer": "ESTE ANÁLISIS ES PRELIMINAR, NO CONSTITUYE ASESORÍA LEGAL DEFINITIVA. CONSULTE CON UN ABOGADO."
+    }
+
+@app.get("/health", tags=["Ops"])
+def health():
+    return {"status": "ok", "timestamp": datetime.now().isoformat(), "service": "LEGISCHECHY"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
