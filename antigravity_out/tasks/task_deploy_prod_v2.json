@@ -1,0 +1,7 @@
+{
+    "id": "task_deploy_prod_v2",
+    "target_file": "antigravity_reports/jules/deploy_log_v2.txt",
+    "action": "EXEC",
+    "content": "python scripts/deploy_production.py",
+    "priority": 1
+}

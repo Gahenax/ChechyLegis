@@ -99,7 +99,8 @@ class JulesWorker:
         "python verify_mvp.py",
         "python verify_free_limits.py",
         "python scripts/rollback_tool.py backup",
-        "python verify_remediation.py"
+        "python verify_remediation.py",
+        "python scripts/deploy_production.py"
     ]
 
     def process_task(self, task: PatchTask):
