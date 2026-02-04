@@ -14,27 +14,32 @@ def run_command(command):
         print(f"SUCCESS: {result.stdout}")
         return True
     else:
-        print(f"FAILED: {result.stderr}")
+        # Avoid non-ascii in error messages too
+        err_msg = result.stderr.encode('ascii', 'ignore').decode('ascii')
+        print(f"FAILED: {err_msg}")
         return False
 
 def main():
     print("Iniciando despliegue de produccion via Jules...")
     
     # 1. Asegurar que estamos en el root
-    os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    # Get the directory of the current script, then get its parent (scripts -> root)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.dirname(script_dir)
+    os.chdir(root_dir)
     
-    # 2. Sincronizar cambios (redundante pero seguro para Jules)
+    # 2. Sincronizar cambios
     if not run_command("git add ."):
         return
         
-    if not run_command('git commit -m "deploy: Production sync via Jules worker"'):
-        print("ℹ️ Nada nuevo que commitear.")
+    # Silently handle 'nothing to commit'
+    run_command('git commit -m "deploy: Production sync via Jules worker"')
     
     # 3. Empujar a producción (GitHub Main)
     if run_command("git push origin main"):
-        print("\n✅ Despliegue completado. Hostinger debería iniciar la sincronización.")
+        print("Despliegue completado. Hostinger deberia iniciar la sincronizacion.")
     else:
-        print("\n❌ Error al empujar a producción.")
+        print("Error al empujar a produccion.")
 
 if __name__ == "__main__":
     main()
