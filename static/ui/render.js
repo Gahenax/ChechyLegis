@@ -245,43 +245,174 @@ const Render = {
         this.clearContent();
         let html = this.header('Archivo Central GAHENAX', '');
         html += `
-            <div class="lex-expediente" style="background: linear-gradient(135deg, rgba(49, 46, 129, 0.1), transparent); margin-bottom:2rem;">
-                <h3 style="color:var(--lex-accent);">Ecosistema Judicial GAHENAX</h3>
-                <p style="margin-bottom:1.5rem; opacity:0.8; font-family:var(--lex-font-heading); font-size:1.1rem;">
-                    Acceda a las herramientas de despliegue, actualizaciones y administración del núcleo Gahenax desde el portal centralizado de jurisprudencia digital.
-                </p>
-                <a href="/static/gahenax_hub.html" class="lex-btn lex-btn-primary" style="text-decoration:none; display:inline-flex;">
-                    <i class="fas fa-landmark"></i> ENTRAR AL ARCHIVO CENTRAL
-                </a>
-            </div>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem;">
-                <div class="lex-expediente">
-                    <h4 style="margin-bottom:1.5rem; border-bottom:1px solid var(--lex-border); padding-bottom:0.5rem;"><i class="fas fa-microchip"></i> JULES CONTROL CENTER</h4>
-                    <p style="font-size:0.75rem; color:var(--lex-text-muted); margin-bottom:1.5rem;">Delegación de tareas asíncronas de mantenimiento y despliegue.</p>
-                    <div style="display:flex; flex-direction:column; gap:1rem;">
-                        <button class="lex-btn" onclick="App.dispatchJules('AUDIT', 'Security Scan')">
-                            <i class="fas fa-shield-halved"></i> AUDITORÍA DE SEGURIDAD
-                        </button>
-                        <button class="lex-btn" onclick="App.dispatchJules('EXEC', 'Build Portable', 'python build_portable.py --src ./static --out ./release --name Chechy --version 1.1.0 --platform windows')">
-                            <i class="fas fa-box-open"></i> GENERAR RELEASE ZIP
-                        </button>
-                    </div>
-                    <div id="jules-status-panel" style="margin-top:2rem; padding:1rem; background:rgba(0,0,0,0.2); font-size:0.7rem; display:none;">
-                        <!-- Status injection -->
-                    </div>
+            <div class="lex-expediente">
+                <h4 style="margin-bottom:1.5rem; border-bottom:1px solid var(--lex-border); padding-bottom:0.5rem;"><i class="fas fa-microchip"></i> JULES CONTROL CENTER</h4>
+                <p style="font-size:0.75rem; color:var(--lex-text-muted); margin-bottom:1.5rem;">Delegación de tareas asíncronas de mantenimiento y despliegue.</p>
+                <div style="display:flex; flex-direction:column; gap:1rem;">
+                    <button class="lex-btn" onclick="App.dispatchJules('AUDIT', 'Security Scan')">
+                        <i class="fas fa-shield-halved"></i> AUDITORÍA DE SEGURIDAD
+                    </button>
+                    <button class="lex-btn" onclick="App.dispatchJules('EXEC', 'Build Portable', 'python build_portable.py --src ./static --out ./release --name Chechy --version 1.1.0 --platform windows')">
+                        <i class="fas fa-box-open"></i> GENERAR RELEASE ZIP
+                    </button>
                 </div>
-
-                <div class="lex-expediente">
-                    <h4 style="margin-bottom:1.5rem; border-bottom:1px solid var(--lex-border); padding-bottom:0.5rem;"><i class="fas fa-fingerprint"></i> ESTADO DE SESIÓN</h4>
-                    <div style="background:rgba(0,0,0,0.4); padding:1rem; font-family:monospace; font-size:0.65rem; color:var(--lex-text-muted); height:150px; overflow:auto;">
-                        <pre>${JSON.stringify(state, null, 2)}</pre>
-                    </div>
-                    <button class="lex-btn" style="margin-top:1rem; width:100%; justify-content:center;" onclick="localStorage.clear(); location.reload();">RESTABLECER SISTEMA</button>
+                <div id="jules-status-panel" style="margin-top:2rem; padding:1rem; background:rgba(0,0,0,0.2); font-size:0.7rem; display:none;">
+                    <!-- Status injection -->
                 </div>
             </div>
         `;
         this.appContent.innerHTML = html;
+    },
+
+    showSupportDesk(state) {
+        this.clearContent();
+        let html = this.header('Soporte CRM', '');
+
+        html += `
+            <div class="lex-expediente" style="max-width: 800px; margin: 0 auto;">
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(99, 102, 241, 0.1); border-left: 3px solid var(--lex-accent);">
+                    <h3 style="margin-bottom: 1rem;"><i class="fas fa-info-circle"></i> Sistema de Soporte</h3>
+                    <p style="margin: 0; opacity: 0.9;">
+                        Utiliza este formulario para reportar problemas, solicitar funcionalidades o hacer consultas sobre el sistema ChechyLegis.
+                    </p>
+                </div>
+
+                <form id="support-form">
+                    <div style="display:grid; gap: 2rem;">
+                        <div>
+                            <label class="lex-label">Nombre Completo *</label>
+                            <input type="text" name="nombre" class="lex-input" required>
+                        </div>
+                        
+                        <div>
+                            <label class="lex-label">Correo Electrónico *</label>
+                            <input type="email" name="email" class="lex-input" required>
+                        </div>
+                        
+                        <div>
+                            <label class="lex-label">Empresa / Organización</label>
+                            <input type="text" name="empresa" class="lex-input" placeholder="Opcional">
+                        </div>
+                        
+                        <div>
+                            <label class="lex-label">Prioridad *</label>
+                            <select name="prioridad" class="lex-input" required>
+                                <option value="BAJA">Baja - Consulta general</option>
+                                <option value="MEDIA" selected>Media - Problema que afecta el uso</option>
+                                <option value="ALTA">Alta - Error crítico</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="lex-label">Asunto *</label>
+                            <input type="text" name="asunto" class="lex-input" placeholder="Ej: Error al conectar con el servidor" required>
+                        </div>
+                        
+                        <div>
+                            <label class="lex-label">Descripción del Problema *</label>
+                            <textarea name="descripcion" class="lex-input" style="height:150px; resize:vertical;" placeholder="Describe el problema con el mayor detalle posible..." required></textarea>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top:3rem; display: flex; gap: 1rem;">
+                        <button type="submit" class="lex-btn lex-btn-primary" style="flex: 1; justify-content:center;">
+                            <i class="fas fa-paper-plane"></i> ENVIAR TICKET
+                        </button>
+                        <button type="button" class="lex-btn" onclick="App.navigate('list')" style="padding: 0 2rem;">
+                            CANCELAR
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="support-response" style="margin-top: 2rem; display: none;">
+                    <!-- Response will be injected here -->
+                </div>
+            </div>
+        `;
+
+        this.appContent.innerHTML = html;
+
+        // Form submission handler
+        document.getElementById('support-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const responseDiv = document.getElementById('support-response');
+            const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            // Disable button during submission
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
+
+            const formData = new FormData(form);
+            const ticketData = {
+                subject: formData.get('asunto'),
+                description: `
+Solicitante: ${formData.get('nombre')}
+Email: ${formData.get('email')}
+Empresa: ${formData.get('empresa') || 'N/A'}
+Prioridad: ${formData.get('prioridad')}
+
+Descripción:
+${formData.get('descripcion')}
+                `.trim(),
+                priority: formData.get('prioridad'),
+                user_email: formData.get('email')
+            };
+
+            try {
+                await window.GahenaxAPI.submitSupportTicket(ticketData);
+
+                responseDiv.style.display = 'block';
+                responseDiv.innerHTML = `
+                    <div style="padding: 2rem; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--lex-accent); text-align: center;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--lex-accent); margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--lex-accent); margin-bottom: 1rem;">TICKET ENVIADO EXITOSAMENTE</h3>
+                        <p style="opacity: 0.9;">
+                            Tu solicitud ha sido registrada en nuestro sistema CRM. Nuestro equipo te contactará a<br>
+                            <strong>${formData.get('email')}</strong> en las próximas 24-48 horas.
+                        </p>
+                        <button class="lex-btn" onclick="App.navigate('list')" style="margin-top: 1.5rem;">
+                            <i class="fas fa-home"></i> VOLVER AL INICIO
+                        </button>
+                    </div>
+                `;
+                form.style.display = 'none';
+
+            } catch (err) {
+                // Si el backend no está disponible, mostramos un mensaje alternativo
+                if (err.message.includes('FAILED (NETWORK)')) {
+                    responseDiv.style.display = 'block';
+                    responseDiv.innerHTML = `
+                        <div style="padding: 2rem; background: rgba(234, 179, 8, 0.1); border: 1px solid #eab308; text-align: center;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #eab308; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #eab308; margin-bottom: 1rem;">MODO OFFLINE</h3>
+                            <p style="opacity: 0.9; margin-bottom: 1.5rem;">
+                                El sistema CRM no está disponible en este momento. Por favor, contacta directamente a:
+                            </p>
+                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; font-family: monospace;">
+                                <strong>Email:</strong> soporte@gahenax.com<br>
+                                <strong>Teléfono:</strong> +57 300 XXX XXXX
+                            </div>
+                            <p style="margin-top: 1.5rem; font-size: 0.85rem; opacity: 0.7;">
+                                O espera a que el backend esté en línea para enviar tickets automáticamente.
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    responseDiv.style.display = 'block';
+                    responseDiv.innerHTML = `
+                        <div style="padding: 2rem; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--lex-error); text-align: center;">
+                            <i class="fas fa-times-circle" style="font-size: 3rem; color: var(--lex-error); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--lex-error); margin-bottom: 1rem;">ERROR AL ENVIAR</h3>
+                            <p>${err.message}</p>
+                        </div>
+                    `;
+                }
+
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> REINTENTAR ENVÍO';
+            }
+        };
     },
 
     renderError(err) {

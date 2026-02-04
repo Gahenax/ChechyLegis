@@ -17,9 +17,10 @@ class Config:
     MAX_DOCS_FREE = 10
 
     # Seguridad
-    JWT_SECRET = os.getenv("JWT_SECRET", "gahenax-ultra-secret-2024")
+    JWT_SECRET = os.getenv("JWT_SECRET")  # Requerido en .env
     ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "admin-token")
     OPERATOR_TOKEN = os.getenv("OPERATOR_TOKEN", "operator-token")
+    ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000").split(",")
     
     # Rutas de Archivos
     FILES_ROOT = os.getenv("FILES_ROOT", os.path.join(os.getcwd(), "storage"))
@@ -32,6 +33,9 @@ class Config:
         """Valida configuraciones críticas."""
         if not cls.GEMINI_API_KEY:
             print("⚠️ ADVERTENCIA: GEMINI_API_KEY no configurada. Funciones IA limitadas.")
+        
+        if not cls.JWT_SECRET:
+            raise ValueError("❌ ERROR CRÍTICO: JWT_SECRET no configurada en el entorno.")
         
         if not os.path.exists(cls.FILES_ROOT):
             os.makedirs(cls.FILES_ROOT, exist_ok=True)

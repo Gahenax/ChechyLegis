@@ -1,0 +1,7 @@
+{
+    "task_id": "task_backup_v3",
+    "status": "FAILED",
+    "message": "Comando fall\u00f3 (code 1).\nSTDERR: Traceback (most recent call last):\n  File \"C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\scripts\\rollback_tool.py\", line 38, in <module>\n    backup()\n    ~~~~~~^^\n  File \"C:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy\\scripts\\rollback_tool.py\", line 18, in backup\n    print(f\"\\u2705 Backup creado: {backup_path}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\USUARIO\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u2705' in position 0: character maps to <undefined>\n",
+    "timestamp": 1770237419.396525,
+    "target": "antigravity_reports/jules/backup_log.txt"
+}

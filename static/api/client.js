@@ -4,7 +4,10 @@
  */
 
 const APIClient = {
-    BASE_URL: '/api',
+    // Configuración del backend
+    // Para desarrollo local: '/api' (relativo)
+    // Para producción: especifica la URL completa, ej: 'https://tu-dominio.com/api'
+    BASE_URL: window.GAHENAX_API_URL || '/api',
 
     async request(endpoint, method = 'GET', body = null) {
         const state = window.GahenaxStore.state;
@@ -18,14 +21,22 @@ const APIClient = {
         const config = { method, headers };
         if (body) config.body = JSON.stringify(body);
 
-        const response = await fetch(`${this.BASE_URL}${endpoint}`, config);
+        try {
+            const response = await fetch(`${this.BASE_URL}${endpoint}`, config);
 
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({ detail: 'Fallo de Protocolo' }));
-            throw new Error(error.detail || 'Error en Gahenax Core');
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({ detail: 'Fallo de Protocolo' }));
+                throw new Error(error.detail || 'Error en Gahenax Core');
+            }
+
+            return response.json();
+        } catch (error) {
+            // Mejor manejo de errores de red
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                throw new Error('FAILED (NETWORK): No se puede conectar al servidor. Verifica que el backend esté corriendo.');
+            }
+            throw error;
         }
-
-        return response.json();
     },
 
     async getExpedientes(filters) {

@@ -1,29 +1,42 @@
 from fastapi import APIRouter, Depends, HTTPException
 from .. import schemas
 from ..core.config import settings
-from ..core.security import get_current_user
+from ..crm_service import CRMService
+from ..hotel_auth import require_auth, HotelGuest
 
 router = APIRouter(
     prefix="/api/support",
     tags=["Soporte & CRM"]
 )
 
+# Shared instance for the pilot
+crm = CRMService()
+
 @router.post("/ticket")
-def create_support_ticket(
+async def create_support_ticket(
     ticket: schemas.SupportTicket,
-    user: dict = Depends(get_current_user)
+    user: HotelGuest = Depends(require_auth)
 ):
     """
-    Reporta un problema o incidencia al CRM. (DESHABILITADO EN VERSIÓN FREE)
+    Reporta un problema o incidencia a la Oficina Central (King CRM).
     """
-    if settings.LICENSE_MODE == "FREE":
+    ticket_data = {
+        "subject": ticket.subject,
+        "description": ticket.description,
+        "priority": ticket.priority,
+        "user_email": user.email
+    }
+    
+    result = crm.report_incident(ticket_data)
+    
+    if not result:
         raise HTTPException(
-            status_code=403, 
-            detail="Integración CRM no disponible en versión FREE local."
+            status_code=503,
+            detail="La Oficina Central no está respondiendo. Intente más tarde."
         )
     
-    # Aquí se integraría con crm_service.py
     return {
         "status": "success", 
-        "message": "Reporte recibido en Gahenax Hub (PRO Simulado)"
+        "message": "Reporte enviado con éxito a la Oficina Central.",
+        "remote_id": result.get("id")
     }

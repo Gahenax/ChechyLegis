@@ -77,7 +77,7 @@ const LayoutRenderer = {
         `;
 
         // Icon left
-        if (link.icon) {
+        if (linkData.icon) {
             const iconLeft = document.createElement('i');
             iconLeft.className = `fas ${linkData.icon}`;
             iconLeft.style.cssText = 'font-size:0.9rem; color:var(--lex-accent);';

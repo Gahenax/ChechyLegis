@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Banner Ecosistema</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #05070a;
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+        }
+
+        .info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Prueba de Banner del Ecosistema GAHENAX</h1>
+
+    <div class="info">
+        <p><strong>Estado:</strong> <span id="status">Verificando...</span></p>
+        <p><strong>Instrucciones:</strong> El banner debería aparecer en la esquina inferior izquierda.</p>
+        <p><strong>Acción:</strong> Puedes cerrarlo con el botón × o hacer click en "EXPLORAR SOLUCIONES"</p>
+    </div>
+
+    <!-- Ecosistema GAHENAX - Banner Promocional -->
+    <div id="ecosystem-banner"
+        style="position:fixed; bottom:20px; left:20px; max-width:400px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(79, 70, 229, 0.95) 100%); border:1px solid rgba(255,255,255,0.2); border-radius:16px; padding:2rem; box-shadow: 0 20px 60px rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index:999; animation: slideInLeft 0.5s ease-out;">
+        <button
+            onclick="document.getElementById('ecosystem-banner').style.display='none'; updateStatus('Banner cerrado por el usuario')"
+            style="position:absolute; top:10px; right:10px; background:rgba(255,255,255,0.1); border:none; color:white; width:24px; height:24px; border-radius:50%; cursor:pointer; font-size:0.8rem; opacity:0.6; transition:0.3s;"
+            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+            <div
+                style="width:50px; height:50px; background:rgba(255,255,255,0.2); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">
+                <i class="fas fa-cube" style="color:white;"></i>
+            </div>
+            <div>
+                <h3 style="margin:0; font-size:1.3rem; font-weight:700; letter-spacing:1px; color:white;">ECOSISTEMA
+                    GAHENAX</h3>
+                <p style="margin:0; font-size:0.75rem; opacity:0.9; color:white; margin-top:0.25rem;">Suite Completa de
+                    Soluciones AI</p>
+            </div>
+        </div>
+
+        <p style="font-size:0.9rem; line-height:1.6; margin-bottom:1.5rem; color:rgba(255,255,255,0.95);">
+            Descubre todo el catálogo de herramientas impulsadas por Inteligencia Artificial para potenciar tu práctica
+            legal y empresarial.
+        </p>
+
+        <a href="https://gahenaxaisolutions.com" target="_blank"
+            style="display:inline-flex; align-items:center; gap:0.75rem; background:white; color:#4f46e5; padding:0.9rem 1.5rem; border-radius:10px; text-decoration:none; font-weight:700; font-size:0.85rem; letter-spacing:1px; transition:0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'"
+            onclick="updateStatus('Usuario hizo click en EXPLORAR SOLUCIONES')">
+            <i class="fas fa-rocket"></i> EXPLORAR SOLUCIONES
+            <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i>
+        </a>
+
+        <div
+            style="margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.2); font-size:0.7rem; color:rgba(255,255,255,0.7); display:flex; align-items:center; gap:0.5rem;">
+            <i class="fas fa-shield-alt"></i>
+            <span>Tecnología Legal Certificada</span>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const banner = document.getElementById('ecosystem-banner');
+            if (banner) {
+                const styles = window.getComputedStyle(banner);
+                console.log('✅ Banner detectado');
+                console.log('Posición:', styles.position);
+                console.log('Display:', styles.display);
+                console.log('Z-index:', styles.zIndex);
+                console.log('Bottom:', styles.bottom);
+                console.log('Left:', styles.left);
+
+                updateStatus('✅ Banner cargado correctamente');
+            } else {
+                console.error('❌ Banner no encontrado');
+                updateStatus('❌ Error: Banner no encontrado');
+            }
+        });
+    </script>
+</body>
+
+</html>

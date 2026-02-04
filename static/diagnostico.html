@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAHENAX - Diagnóstico de Conexión</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            color: #f8fafc;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .diagnostic-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .test-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border-left: 3px solid #475569;
+        }
+
+        .test-item.success {
+            border-left-color: #10b981;
+        }
+
+        .test-item.error {
+            border-left-color: #ef4444;
+        }
+
+        .test-item.warning {
+            border-left-color: #eab308;
+        }
+
+        .test-label {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .test-status {
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .status-pending {
+            background: rgba(107, 114, 128, 0.3);
+            color: #9ca3af;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-warning {
+            background: rgba(234, 179, 8, 0.2);
+            color: #eab308;
+        }
+
+        .btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .config-info {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-stethoscope"></i> Diagnóstico GAHENAX</h1>
+            <p style="opacity: 0.8;">Herramienta de verificación de conectividad y configuración</p>
+        </div>
+
+        <div class="diagnostic-card">
+            <h2 style="margin-bottom: 1.5rem;"><i class="fas fa-network-wired"></i> Pruebas de Conexión</h2>
+
+            <div id="test-config" class="test-item">
+                <div class="test-label">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración del API</span>
+                </div>
+                <span class="test-status status-pending" id="status-config">PENDIENTE</span>
+            </div>
+
+            <div id="test-frontend" class="test-item">
+                <div class="test-label">
+                    <i class="fas fa-file-code"></i>
+                    <span>Archivos Frontend</span>
+                </div>
+                <span class="test-status status-pending" id="status-frontend">PENDIENTE</span>
+            </div>
+
+            <div id="test-backend" class="test-item">
+                <div class="test-label">
+                    <i class="fas fa-server"></i>
+                    <span>Conexión Backend API</span>
+                </div>
+                <span class="test-status status-pending" id="status-backend">PENDIENTE</span>
+            </div>
+
+            <div id="test-health" class="test-item">
+                <div class="test-label">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Health Check</span>
+                </div>
+                <span class="test-status status-pending" id="status-health">PENDIENTE</span>
+            </div>
+
+            <button class="btn" onclick="runDiagnostics()">
+                <i class="fas fa-play"></i> Ejecutar Diagnóstico
+            </button>
+
+            <div id="results" class="config-info" style="display: none; margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Resultados del Diagnóstico:</h3>
+                <pre id="results-content"></pre>
+            </div>
+        </div>
+
+        <div class="diagnostic-card">
+            <h2 style="margin-bottom: 1.5rem;"><i class="fas fa-wrench"></i> Recomendaciones</h2>
+            <div id="recommendations">
+                <p style="opacity: 0.7;">Ejecuta el diagnóstico para obtener recomendaciones personalizadas.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let diagnosticResults = {};
+
+        async function runDiagnostics() {
+            diagnosticResults = {};
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('results-content');
+            const recommendationsDiv = document.getElementById('recommendations');
+
+            resultsDiv.style.display = 'none';
+            recommendationsDiv.innerHTML = '<p style="opacity: 0.7;"><i class="fas fa-spinner fa-spin"></i> Analizando...</p>';
+
+            // Test 1: Configuración
+            await testConfiguration();
+            await new Promise(r => setTimeout(r, 500));
+
+            // Test 2: Frontend Files
+            await testFrontendFiles();
+            await new Promise(r => setTimeout(r, 500));
+
+            // Test 3: Backend Connection
+            await testBackendConnection();
+            await new Promise(r => setTimeout(r, 500));
+
+            // Test 4: Health Check
+            await testHealthCheck();
+
+            // Mostrar resultados
+            resultsDiv.style.display = 'block';
+            resultsContent.textContent = JSON.stringify(diagnosticResults, null, 2);
+
+            // Generar recomendaciones
+            generateRecommendations();
+        }
+
+        async function testConfiguration() {
+            const statusEl = document.getElementById('status-config');
+            const testEl = document.getElementById('test-config');
+
+            statusEl.innerHTML = '<i class="fas fa-spinner spinner"></i> VERIFICANDO...';
+            statusEl.className = 'test-status status-pending';
+
+            try {
+                // Verificar si existe config.js
+                const apiUrl = window.GAHENAX_API_URL || '/api';
+                diagnosticResults.config = {
+                    apiUrl: apiUrl,
+                    isRelative: apiUrl.startsWith('/'),
+                    isAbsolute: apiUrl.startsWith('http')
+                };
+
+                statusEl.textContent = 'OK ✓';
+                statusEl.className = 'test-status status-success';
+                testEl.classList.add('success');
+            } catch (err) {
+                diagnosticResults.config = { error: err.message };
+                statusEl.textContent = 'ERROR ✗';
+                statusEl.className = 'test-status status-error';
+                testEl.classList.add('error');
+            }
+        }
+
+        async function testFrontendFiles() {
+            const statusEl = document.getElementById('status-frontend');
+            const testEl = document.getElementById('test-frontend');
+
+            statusEl.innerHTML = '<i class="fas fa-spinner spinner"></i> VERIFICANDO...';
+
+            try {
+                const files = [
+                    '/static/app.js',
+                    '/static/api/client.js',
+                    '/static/state/store.js',
+                    '/static/ui/render.js'
+                ];
+
+                const results = await Promise.all(
+                    files.map(async file => {
+                        try {
+                            const response = await fetch(file, { method: 'HEAD' });
+                            return { file, status: response.status };
+                        } catch (err) {
+                            return { file, error: err.message };
+                        }
+                    })
+                );
+
+                diagnosticResults.frontendFiles = results;
+                const allOk = results.every(r => r.status === 200);
+
+                if (allOk) {
+                    statusEl.textContent = 'OK ✓';
+                    statusEl.className = 'test-status status-success';
+                    testEl.classList.add('success');
+                } else {
+                    statusEl.textContent = 'PARCIAL ⚠';
+                    statusEl.className = 'test-status status-warning';
+                    testEl.classList.add('warning');
+                }
+            } catch (err) {
+                diagnosticResults.frontendFiles = { error: err.message };
+                statusEl.textContent = 'ERROR ✗';
+                statusEl.className = 'test-status status-error';
+                testEl.classList.add('error');
+            }
+        }
+
+        async function testBackendConnection() {
+            const statusEl = document.getElementById('status-backend');
+            const testEl = document.getElementById('test-backend');
+
+            statusEl.innerHTML = '<i class="fas fa-spinner spinner"></i> CONECTANDO...';
+
+            try {
+                const apiUrl = window.GAHENAX_API_URL || '/api';
+                const response = await fetch(`${apiUrl}/procesos`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                diagnosticResults.backend = {
+                    status: response.status,
+                    ok: response.ok,
+                    url: `${apiUrl}/procesos`
+                };
+
+                if (response.ok) {
+                    statusEl.textContent = 'CONECTADO ✓';
+                    statusEl.className = 'test-status status-success';
+                    testEl.classList.add('success');
+                } else {
+                    statusEl.textContent = `ERROR ${response.status}`;
+                    statusEl.className = 'test-status status-error';
+                    testEl.classList.add('error');
+                }
+            } catch (err) {
+                diagnosticResults.backend = {
+                    error: err.message,
+                    type: 'NETWORK_ERROR'
+                };
+                statusEl.textContent = 'SIN CONEXIÓN ✗';
+                statusEl.className = 'test-status status-error';
+                testEl.classList.add('error');
+            }
+        }
+
+        async function testHealthCheck() {
+            const statusEl = document.getElementById('status-health');
+            const testEl = document.getElementById('test-health');
+
+            statusEl.innerHTML = '<i class="fas fa-spinner spinner"></i> VERIFICANDO...';
+
+            try {
+                const apiUrl = window.GAHENAX_API_URL || '/api';
+                const response = await fetch(`${apiUrl}/health`, {
+                    method: 'GET'
+                });
+
+                diagnosticResults.health = {
+                    status: response.status,
+                    ok: response.ok
+                };
+
+                if (response.ok) {
+                    const data = await response.json();
+                    diagnosticResults.health.data = data;
+                    statusEl.textContent = 'SALUDABLE ✓';
+                    statusEl.className = 'test-status status-success';
+                    testEl.classList.add('success');
+                } else {
+                    statusEl.textContent = 'DEGRADADO ⚠';
+                    statusEl.className = 'test-status status-warning';
+                    testEl.classList.add('warning');
+                }
+            } catch (err) {
+                diagnosticResults.health = {
+                    error: err.message,
+                    available: false
+                };
+                statusEl.textContent = 'NO DISPONIBLE ✗';
+                statusEl.className = 'test-status status-error';
+                testEl.classList.add('error');
+            }
+        }
+
+        function generateRecommendations() {
+            const recommendationsDiv = document.getElementById('recommendations');
+            let recommendations = [];
+
+            // Analizar resultados y generar recomendaciones
+            if (diagnosticResults.backend?.type === 'NETWORK_ERROR') {
+                recommendations.push({
+                    icon: 'fas fa-server',
+                    type: 'error',
+                    title: 'Backend No Disponible',
+                    message: 'El servidor backend no está accesible. Verifica que esté corriendo o configura la URL correcta en config.js'
+                });
+            }
+
+            if (diagnosticResults.config?.isRelative && diagnosticResults.backend?.type === 'NETWORK_ERROR') {
+                recommendations.push({
+                    icon: 'fas fa-exclamation-triangle',
+                    type: 'warning',
+                    title: 'URL Relativa Sin Backend Local',
+                    message: 'Estás usando una URL relativa (/api) pero no hay backend local. Considera desplegar el backend o usar una URL absoluta.'
+                });
+            }
+
+            if (!diagnosticResults.backend?.error && diagnosticResults.backend?.ok) {
+                recommendations.push({
+                    icon: 'fas fa-check-circle',
+                    type: 'success',
+                    title: '¡Todo Funciona Correctamente!',
+                    message: 'La conexión con el backend está establecida y funcionando. ChechyLegis está listo para usar.'
+                });
+            }
+
+            if (diagnosticResults.frontendFiles?.some(f => f.error)) {
+                recommendations.push({
+                    icon: 'fas fa-file-code',
+                    type: 'warning',
+                    title: 'Archivos Frontend Faltantes',
+                    message: 'Algunos archivos del frontend no se encuentran. Verifica que todos los archivos estén subidos correctamente.'
+                });
+            }
+
+            // Renderizar recomendaciones
+            if (recommendations.length === 0) {
+                recommendationsDiv.innerHTML = '<p style="opacity: 0.7;">No se encontraron problemas.</p>';
+            } else {
+                recommendationsDiv.innerHTML = recommendations.map(rec => `
+                    <div style="padding: 1rem; margin-bottom: 1rem; background: rgba(0,0,0,0.2); border-left: 3px solid ${rec.type === 'error' ? '#ef4444' : rec.type === 'warning' ? '#eab308' : '#10b981'}; border-radius: 4px;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                            <i class="${rec.icon}" style="color: ${rec.type === 'error' ? '#ef4444' : rec.type === 'warning' ? '#eab308' : '#10b981'};"></i>
+                            <strong>${rec.title}</strong>
+                        </div>
+                        <p style="opacity: 0.8; font-size: 0.9rem; margin: 0;">${rec.message}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Cargar config.js si existe
+        const script = document.createElement('script');
+        script.src = '/static/config.js';
+        script.onerror = () => {
+            console.warn('config.js no encontrado, usando valores por defecto');
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+
+</html>

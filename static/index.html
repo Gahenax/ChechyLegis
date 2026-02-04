@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChechyLegis | Tribunal Digital GAHENAX</title>
+    <meta name="description"
+        content="Sistema experto de jurisprudencia y análisis legal penal colombiano impulsado por IA de GAHENAX CORE.">
+    <meta name="keywords" content="ley, derecho penal, colombia, jurisprudencia, inteligencia artificial, gahenax">
     <!-- Fonts de Autoridad -->
     <link rel="stylesheet" href="/static/styles/chechylegis-theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -40,15 +43,14 @@
             </div>
 
             <nav style="flex:1;">
-                <!-- Navigation links rendered dynamically by ui/layout.js -->
-                <ul style="list-style:none; padding:0; margin:0;">
-                    <!-- Links injected by GahenaxLayout.renderSidebar() -->
-                </ul>
+                <ul style="list-style:none; padding:0; margin:0;"></ul>
             </nav>
 
             <div class="sidebar-footer"
                 style="padding-top: 2rem; border-top: 1px solid var(--lex-border); font-size: 0.65rem; color: var(--lex-text-muted); letter-spacing: 1px;">
                 <p>&copy; 2026 GAHENAX ARCHIVE S.A.S.</p>
+                <p style="margin-top:5px; color:var(--lex-accent); cursor:pointer;"
+                    onclick="alert('Política de Privacidad institucional v1.0')">Privacidad y Legal</p>
                 <p style="margin-top:5px; color:var(--lex-accent);">LEX-CORE v1.1.0-REF</p>
             </div>
         </aside>
@@ -63,9 +65,10 @@
                         style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size:0.8rem; opacity:0.3;"></i>
                     <input type="text" id="ai-search-input" class="lex-input"
                         style="padding-left: 1.5rem; font-size:0.8rem;"
-                        placeholder="Consultar motor jurídico: 'análisis de tipicidad'..." />
-                    <button class="lex-btn" onclick="performAISearch()"
-                        style="padding: 0.4rem 1rem; font-size:0.65rem;">
+                        placeholder="Consultar motor jurídico: 'análisis de tipicidad'..."
+                        aria-label="Caja de búsqueda para análisis legal por IA" />
+                    <button class="lex-btn" onclick="performAISearch()" style="padding: 0.4rem 1rem; font-size:0.65rem;"
+                        aria-label="Ejecutar análisis de IA">
                         <i class="fas fa-microchip"></i> ANALIZAR
                     </button>
                 </div>

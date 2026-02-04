@@ -1,6 +1,7 @@
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from .context import set_current_user
+from .metrics import metrics
 import time
 import logging
 
@@ -23,6 +24,9 @@ class AuditMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
         
         process_time = time.time() - start_time
+        
+        # Log metrics
+        metrics.log_request(response.status_code, process_time)
         
         # Log de acción en consola/logs (Caja Negra de Red)
         if request.url.path.startswith("/api"):

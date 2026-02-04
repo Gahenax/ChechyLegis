@@ -1,0 +1,7 @@
+{
+    "task_id": "task_backup_pre_deploy",
+    "status": "FAILED",
+    "message": "Error de subordinaci\u00f3n: Alcance prohibido.",
+    "timestamp": 1770237376.899358,
+    "target": "antigravity_reports/jules/backup_log.txt"
+}

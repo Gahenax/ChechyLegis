@@ -1,0 +1,112 @@
+{
+    "hotel": {
+        "domain": "gahenaxaisolutions.com",
+        "concept": "Hotel model: site=lobby, each app=room, access via keys, everything logged.",
+        "mode": "PILOT",
+        "pilot_room": "chechylegis"
+    },
+    "floors": [
+        {
+            "id": 4,
+            "name": "Legal",
+            "active": true
+        },
+        {
+            "id": 1,
+            "name": "Operación",
+            "active": false
+        },
+        {
+            "id": 2,
+            "name": "Decisión",
+            "active": false
+        },
+        {
+            "id": 3,
+            "name": "Producción",
+            "active": false
+        },
+        {
+            "id": 5,
+            "name": "Mercado",
+            "active": false
+        }
+    ],
+    "plans": [
+        {
+            "id": "core",
+            "name": "Core Stay",
+            "price": 0
+        },
+        {
+            "id": "pro",
+            "name": "Pro Stay",
+            "price": 50
+        },
+        {
+            "id": "max",
+            "name": "Max Stay",
+            "price": 100
+        }
+    ],
+    "access_rules": {
+        "roles": [
+            "viewer",
+            "customer",
+            "operator",
+            "admin"
+        ],
+        "rule_1": "Public can view lobby and room door but cannot enter without auth+valid key.",
+        "rule_2": "Backend always authorizes. ChechyLegis accessible only via Hotel gateway.",
+        "rule_3": "All enter attempts are logged with allow/deny reasons."
+    },
+    "rooms_seed": [
+        {
+            "slug": "chechylegis",
+            "name": "ChechyLegis",
+            "floor": 4,
+            "type": "web_room",
+            "tagline": "Norma, jurisprudencia y prueba convertidas en decisión.",
+            "description_short": "Sistema jurídico-operativo para análisis penal estructurado y decisiones defendibles.",
+            "description_long": "Habitación legal del Hotel Gahenax que aplica un método por capas — norma, jurisprudencia, prueba, riesgo y decisión — permitiendo simular providencias, estructurar argumentos y registrar el razonamiento de forma auditada.",
+            "tags": [
+                "Legal",
+                "Penal",
+                "Decisión",
+                "Colombia"
+            ],
+            "requirements": [
+                "Cuenta activa",
+                "Rol customer o superior",
+                "Llave Pro o Max"
+            ],
+            "services": [
+                "Análisis normativo (CP / CPP)",
+                "Jurisprudencia CSJ y Corte Constitucional",
+                "Evaluación probatoria",
+                "Simulación de providencias",
+                "Registro lógico del razonamiento",
+                "Historial auditado de decisiones"
+            ],
+            "access_policy": {
+                "allowed_plans": [
+                    "pro",
+                    "max"
+                ],
+                "min_role": "customer"
+            },
+            "status": "active",
+            "existing_url": "http://localhost:8000/static/index.html",
+            "version": "v1.1.0"
+        }
+    ],
+    "integration": {
+        "strategy": "Gateway Wrapper",
+        "existing_app": {
+            "path": "c:\\Users\\USUARIO\\OneDrive\\Desktop\\Legischechy",
+            "port": 8000,
+            "framework": "FastAPI",
+            "frontend": "Vanilla"
+        }
+    }
+}

@@ -19,7 +19,7 @@ logger = logging.getLogger("jules")
 
 @dataclass
 class JulesConfig:
-    allowed_dirs: List[str] = field(default_factory=lambda: ["app", "static"])
+    allowed_dirs: List[str] = field(default_factory=lambda: ["app", "static", "antigravity_reports", "scripts"])
     max_retries: int = 3
     task_queue_path: str = "antigravity_out/tasks"
     reports_path: str = "antigravity_reports/jules"
@@ -58,11 +58,16 @@ class JulesWorker:
             return False
             
         # 2. Solo archivos en directorios permitidos
-        relative_path = target_path.relative_to(workspace_root)
-        top_dir = relative_path.parts[0] if relative_path.parts else ""
+        try:
+            # Normalizar a posix para evitar problemas con backslashes en Windows
+            rel_path_str = target_path.relative_to(workspace_root).as_posix()
+            top_dir = rel_path_str.split('/')[0] if '/' in rel_path_str else rel_path_str
+        except ValueError:
+             logger.error(f"VIOLACIÓN DE ALCANCE: {task.target_file} no es relativo al root.")
+             return False
         
         if top_dir not in self.config.allowed_dirs:
-            logger.error(f"VIOLACIÓN DE ALCANCE: Directorio '{top_dir}' no permitido para Jules.")
+            logger.error(f"VIOLACIÓN DE ALCANCE: Directorio '{top_dir}' no permitido para Jules. Permitidos: {self.config.allowed_dirs}")
             return False
             
         return True
@@ -92,7 +97,9 @@ class JulesWorker:
         "python auditoria_semaforo.py",
         "pip list --outdated",
         "python verify_mvp.py",
-        "python verify_free_limits.py"
+        "python verify_free_limits.py",
+        "python scripts/rollback_tool.py backup",
+        "python verify_remediation.py"
     ]
 
     def process_task(self, task: PatchTask):

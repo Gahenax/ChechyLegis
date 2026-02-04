@@ -147,6 +147,10 @@ class SupportTicket(BaseModel):
     priority: str = "medium"
     user_email: Optional[str] = "anon@legis.tech"
 
+class CheckinRequest(BaseModel):
+    email: str
+    password: str
+
 # ============================================
 # LEGAL / SAFETY (Analysis Response)
 # ============================================

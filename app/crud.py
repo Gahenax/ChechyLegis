@@ -35,6 +35,11 @@ def get_procesos(db: Session, skip: int = 0, limit: int = 100,
     return query.offset(skip).limit(limit).all()
 
 def create_proceso(db: Session, proceso: schemas.ProcesoCreate):
+    # Idempotencia: Verificar si ya existe un proceso con este número
+    existing = get_proceso_by_numero(db, proceso.numero_proceso)
+    if existing:
+        return existing
+        
     db_proceso = models.Proceso(**proceso.model_dump())
     db.add(db_proceso)
     db.commit()

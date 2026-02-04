@@ -21,8 +21,8 @@ const NAVIGATION_LINKS = {
         },
         {
             id: 'nav-support',
-            label: 'SOPORTE CRM',
-            icon: 'fa-gavel',
+            label: 'LLAMAR A RECEPCIÓN',
+            icon: 'fa-phone-alt',
             route: 'support',
             section: 'main'
         },
@@ -35,24 +35,23 @@ const NAVIGATION_LINKS = {
         },
         {
             id: 'nav-ecosystem',
-            label: 'ECOSISTEMA GAHENAX',
-            icon: 'fa-th-large',
-            href: 'https://gahenaxaisolutions.com',
-            external: true,
+            label: 'LOBBY DEL HOTEL',
+            icon: 'fa-hotel',
+            href: '/gahenax_hub.html',
+            external: false,
             section: 'footer',
-            iconRight: 'fa-external-link-alt'
+            iconRight: 'fa-door-open'
         }
     ],
 
     header: [
         {
             id: 'btn-ecosystem',
-            label: 'ECOSISTEMA',
-            icon: 'fa-cube',
-            href: 'https://gahenaxaisolutions.com',
-            external: true,
-            iconRight: 'fa-external-link-alt',
-            style: 'primary' // blue gradient
+            label: 'IR AL LOBBY',
+            icon: 'fa-hotel',
+            href: '/gahenax_hub.html',
+            external: false,
+            style: 'primary'
         }
     ]
 };
