@@ -1,0 +1,33 @@
+MIT License - FREE Edition
+
+ChechyLegis "Edición Libre Local"
+Derechos de Autor (c) 2026 José de Ávila / GHAENAX
+
+Se concede permiso, de forma gratuita, a cualquier persona que obtenga una copia
+de este software y de los archivos de documentación asociados (el "Software"), para
+utilizar el Software únicamente para fines Personales, Educativos o de Evaluación,
+sujeto a las siguientes condiciones:
+
+1. El aviso de copyright anterior y este aviso de permiso se incluirán en todas
+   las copias o partes sustanciales del Software.
+
+2. El Software se proporciona para uso LOCAL. No está permitida su reventa ni su
+   uso como servicio comercial masivo.
+
+3. LIMITACIONES DE LA VERSIÓN FREE:
+   - Máximo 3 casos activos simultáneos.
+   - Máximo 10 documentos por caso.
+   - Historial visible de 30 días.
+   - Usuario único local.
+
+4. RENUNCIA DE RESPONSABILIDAD:
+   EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O
+   IMPLÍCITA. EN NINGÚN CASO LOS AUTORES O TITULARES DEL COPYRIGHT SERÁN
+   RESPONSABLES DE NINGUNA RECLAMACIÓN, DAÑO U OTRA RESPONSABILIDAD, YA SEA EN
+   UNA ACCIÓN DE CONTRATO, AGRAVIO O DE OTRO MODO, QUE SURJA DE, FUERA DE O EN
+   CONEXIÓN CON EL SOFTWARE O EL USO U OTROS TRATOS EN EL SOFTWARE.
+
+5. AVISO LEGAL CRÍTICO:
+   CHECHYLEGIS ES UNA HERRAMIENTA DE ASISTENCIA. NO CONSTITUYE ASESORÍA LEGAL.
+   EL USO DE ESTA HERRAMIENTA NO SUSTITUYE EL CRITERIO DE UN PROFESIONAL DEL DERECHO.
+   LOS RESULTADOS GENERADOS POR IA SON HIPOTÉTICOS Y DETERMINÍSTICOS BASADOS EN PROMPTS.

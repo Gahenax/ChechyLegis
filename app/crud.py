@@ -26,8 +26,14 @@ def get_procesos(db: Session, skip: int = 0, limit: int = 100,
                  fecha_desde: Optional[date] = None, 
                  fecha_hasta: Optional[date] = None,
                  estado: Optional[models.EstadoProceso] = None,
-                 numero_proceso: Optional[str] = None):
+                 numero_proceso: Optional[str] = None,
+                 license_mode: str = "FREE"):
     query = db.query(models.Proceso).filter(models.Proceso.deleted_at == None)
+    
+    if license_mode == "FREE":
+        from datetime import datetime, timedelta
+        limit_date = datetime.now().date() - timedelta(days=30)
+        query = query.filter(models.Proceso.fecha_radicacion >= limit_date)
     
     if fecha_desde:
         query = query.filter(models.Proceso.fecha_radicacion >= fecha_desde)

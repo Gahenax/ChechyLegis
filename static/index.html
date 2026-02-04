@@ -17,7 +17,7 @@
         <nav class="sidebar">
             <div class="brand">
                 <div class="logo">
-                    <h1>Justicia<span>Virtual</span></h1>
+                    <h1>Justicia<span>Virtual</span><span class="free-badge">FREE</span></h1>
                 </div>
             </div>
             <ul>
@@ -91,6 +91,26 @@
     <!-- Chat Toggle Button -->
     <div class="chat-toggle-btn" onclick="toggleChat()">
         <i class="fas fa-comment-dots" style="font-size: 1.5rem;"></i>
+    </div>
+    <div id="disclaimer-modal" class="hidden">
+        <div class="disclaimer-content">
+            <i class="fas fa-balance-scale-left"
+                style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+            <h2>Aviso Legal Importante</h2>
+            <div class="disclaimer-text">
+                ChechyLegis es una herramienta de análisis jurídico asistido por IA.
+                <strong>No constituye asesoría legal profesional ni garantiza resultados judiciales concretos.</strong>
+                Los análisis generados son hipótesis de trabajo basadas en los datos suministrados.
+                El criterio final y la responsabilidad jurídica recaen siempre en el usuario humano profesional.
+                <br><br>
+                Al continuar, usted acepta que esta es una herramienta de apoyo y no un sustituto del juicio legal
+                humano.
+            </div>
+            <div class="disclaimer-footer">
+                <button class="btn btn-primary" style="width: 100%;" onclick="acceptDisclaimer()">Entiendo y
+                    Acepto</button>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>

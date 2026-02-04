@@ -22,8 +22,20 @@ let filters = JSON.parse(localStorage.getItem('chechy_filters')) || {
 roleSelector.addEventListener('change', (e) => {
     currentRole = e.target.value;
     document.getElementById('current-user-display').innerText = `Usuario: ${currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}`;
-    loadList(); // Refresh list to respect roles (especially delete button visibility)
+    loadList();
+    checkDisclaimer();
 });
+
+function checkDisclaimer() {
+    if (!localStorage.getItem('chechy_disclaimer_accepted')) {
+        document.getElementById('disclaimer-modal').classList.remove('hidden');
+    }
+}
+
+function acceptDisclaimer() {
+    localStorage.setItem('chechy_disclaimer_accepted', 'true');
+    document.getElementById('disclaimer-modal').classList.add('hidden');
+}
 
 navList.addEventListener('click', () => {
     setActiveNav(navList);
@@ -84,7 +96,14 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 // Views
 async function loadList() {
-    const query = new URLSearchParams(filters).toString();
+    // Clean empty filters to avoid 422 errors in FastAPI (it fails on empty strings for date/enum)
+    const activeFilters = {};
+    for (const [key, value] of Object.entries(filters)) {
+        if (value !== '' && value !== null && value !== undefined) {
+            activeFilters[key] = value;
+        }
+    }
+    const query = new URLSearchParams(activeFilters).toString();
     try {
         const procesos = await apiCall(`/procesos?${query}`);
         renderListPage(procesos);
@@ -96,7 +115,7 @@ async function loadList() {
 function renderListPage(procesos) {
     content.innerHTML = `
         <div class="view-header">
-            <h2>Gestión de Procesos</h2>
+            <h2>Gestión de Procesos <small style="font-size:0.8rem; color:var(--text-dim); margin-left:1rem;">(${procesos.length}/3 Casos FREE)</small></h2>
             ${currentRole !== 'viewer' ? `<button class="btn btn-primary" onclick="renderCreateForm()">+ Nuevo Proceso</button>` : ''}
         </div>
 
@@ -516,6 +535,10 @@ function showAIAnalysis(result) {
             </div>
             <button class="btn btn-primary" onclick="findSimilarCases(${p.id})">🔍 Buscar Casos Similares</button>
         </div>
+
+        <div class="disclaimer-mini" style="margin-top: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.2); border-radius: 12px; font-size: 0.8rem; color: var(--text-dim); text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+            <strong>AVISO LEGAL:</strong> ChechyLegis es una herramienta de análisis asistido. No constituye asesoría legal ni garantiza resultados. El criterio final siempre es humano.
+        </div>
     `;
 }
 
@@ -707,3 +730,4 @@ function renderSupportForm() {
 
 // Start
 loadList();
+checkDisclaimer();

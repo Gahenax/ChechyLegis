@@ -19,6 +19,10 @@ from fastapi import UploadFile, File as FastAPIFile
 load_dotenv()
 
 # --- CONFIGURACIÓN LEGISCHECHY ---
+LICENSE_MODE = os.getenv("LICENSE_MODE", "FREE")  # FREE | PRO
+MAX_CASES_FREE = 3
+MAX_DOCS_FREE = 10
+
 FILES_ROOT = os.getenv("FILES_ROOT", os.path.join(os.getcwd(), "storage"))
 JWT_SECRET = os.getenv("JWT_SECRET", "super-secret-key")
 security = HTTPBearer()
@@ -106,12 +110,20 @@ def create_proceso(
     db: Session = Depends(get_db),
     user: dict = Depends(role_required(["operator", "admin"]))
 ):
+    # Enforce FREE limits
+    if LICENSE_MODE == "FREE":
+        current_count = db.query(models.Proceso).filter(models.Proceso.deleted_at == None).count()
+        if current_count >= MAX_CASES_FREE:
+            raise HTTPException(
+                status_code=403, 
+                detail=f"Límite de la versión FREE alcanzado ({MAX_CASES_FREE} casos). Por favor elimine uno para continuar."
+            )
+
     existing = crud.get_proceso_by_numero(db, proceso.numero_proceso)
     if existing:
         raise HTTPException(status_code=400, detail="El número de proceso ya existe")
     new_proceso = crud.create_proceso(db=db, proceso=proceso, usuario=user["name"])
     
-    # El CRM ahora solo recibe reportes de problemas manuales vía /api/support/ticket
     return new_proceso
 
 @app.get("/api/procesos", response_model=List[schemas.ProcesoSchema])
@@ -125,7 +137,7 @@ def list_procesos(
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user_role)
 ):
-    return crud.get_procesos(db, skip, limit, fecha_desde, fecha_hasta, estado, numero_proceso)
+    return crud.get_procesos(db, skip, limit, fecha_desde, fecha_hasta, estado, numero_proceso, license_mode=LICENSE_MODE)
 
 @app.get("/api/procesos/{proceso_id}", response_model=schemas.ProcesoDetailSchema)
 def get_proceso_detail(
@@ -175,8 +187,11 @@ def create_support_ticket(
     user: dict = Depends(get_current_user_role)
 ):
     """
-    Reporta un problema o incidencia al CRM en tiempo real.
+    Reporta un problema o incidencia al CRM. (DESHABILITADO EN VERSIÓN FREE)
     """
+    if LICENSE_MODE == "FREE":
+        raise HTTPException(status_code=403, detail="Integración CRM no disponible en versión FREE local.")
+    
     if not crm_service:
          raise HTTPException(status_code=503, detail="Servicio de soporte no configurado")
     

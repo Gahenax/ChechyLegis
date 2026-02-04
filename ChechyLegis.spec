@@ -17,6 +17,8 @@ added_files = [
     ('icon.ico', '.'),
     ('icon.png', '.'),
     ('README.md', '.'),
+    ('LICENSE_FREE.txt', '.'),
+    ('README_PRIMEROS_PASOS.md', '.'),
 ]
 
 # Módulos ocultos necesarios
