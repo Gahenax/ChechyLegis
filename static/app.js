@@ -7,6 +7,9 @@ const App = {
     async init() {
         console.log("GAHENAX Core Initializing (Lex-Tech Standard)...");
 
+        // Initialize Layout (renders header + sidebar)
+        window.GahenaxLayout.init();
+
         // Initialize UI Engine
         window.GahenaxRender.init('content');
 
@@ -20,14 +23,27 @@ const App = {
             document.getElementById('current-user-display').innerText = e.target.value.toUpperCase();
         };
 
-        // Navigation
-        document.getElementById('nav-list').onclick = () => this.navigate('list');
-        document.getElementById('nav-create').onclick = () => this.navigate('form');
-        document.getElementById('nav-support').onclick = () => this.navigate('support');
-        document.getElementById('nav-settings').onclick = () => this.navigate('settings');
+        // Dynamic Navigation Setup from data
+        this.setupNavigation();
 
         // Store Subscription
         window.GahenaxStore.subscribe((state) => this.updateUI(state));
+    },
+
+    setupNavigation() {
+        // Setup sidebar navigation
+        window.GahenaxNavigation.sidebar.forEach(link => {
+            const el = document.getElementById(link.id);
+            if (el && link.route) {
+                el.onclick = (e) => {
+                    e.preventDefault();
+                    this.navigate(link.route);
+                };
+            }
+            // External links handle themselves via href
+        });
+
+        console.log('✅ Navigation configured');
     },
 
     navigate(view) {

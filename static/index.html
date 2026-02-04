@@ -8,6 +8,19 @@
     <!-- Fonts de Autoridad -->
     <link rel="stylesheet" href="/static/styles/chechylegis-theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -27,19 +40,9 @@
             </div>
 
             <nav style="flex:1;">
+                <!-- Navigation links rendered dynamically by ui/layout.js -->
                 <ul style="list-style:none; padding:0; margin:0;">
-                    <li style="margin-bottom:0.5rem;"><a href="#" id="nav-list" class="active"
-                            style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:1rem; padding:1rem; font-size:0.85rem; letter-spacing:1px;"><i
-                                class="fas fa-archive"></i> EXPEDIENTES</a></li>
-                    <li style="margin-bottom:0.5rem;"><a href="#" id="nav-create"
-                            style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:1rem; padding:1rem; font-size:0.85rem; letter-spacing:1px;"><i
-                                class="fas fa-file-signature"></i> RADICACIÓN</a></li>
-                    <li style="margin-bottom:0.5rem;"><a href="#" id="nav-support"
-                            style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:1rem; padding:1rem; font-size:0.85rem; letter-spacing:1px;"><i
-                                class="fas fa-gavel"></i> SOPORTE CRM</a></li>
-                    <li style="margin-bottom:0.5rem;"><a href="#" id="nav-settings"
-                            style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:1rem; padding:1rem; font-size:0.85rem; letter-spacing:1px;"><i
-                                class="fas fa-landmark"></i> ARCHIVO CENTRAL</a></li>
+                    <!-- Links injected by GahenaxLayout.renderSidebar() -->
                 </ul>
             </nav>
 
@@ -52,6 +55,8 @@
 
         <section style="display:flex; flex-direction:column; flex:1; height:100vh;">
             <header class="lex-header">
+                <!-- Header nav rendered dynamically by ui/layout.js -->
+
                 <div class="ai-search-container"
                     style="flex:1; max-width:600px; position:relative; display:flex; gap:1rem;">
                     <i class="fas fa-search"
@@ -127,8 +132,11 @@
     </div>
 
     <!-- Lex-Tech Architecture Stack -->
+    <script src="/static/config.js"></script>
     <script src="/static/state/store.js"></script>
     <script src="/static/api/client.js"></script>
+    <script src="/static/ui/navigation.js"></script>
+    <script src="/static/ui/layout.js"></script>
     <script src="/static/ui/render.js"></script>
     <script src="/static/app.js"></script>
 </body>
