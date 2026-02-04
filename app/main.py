@@ -50,12 +50,30 @@ app.include_router(jules.router)
 
 # Montar Archivos Estáticos
 # Asegurarse de que la ruta absoluta sea correcta
-static_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+base_path = os.path.dirname(os.path.dirname(__file__))
+static_path = os.path.join(base_path, "static")
 if os.path.exists(static_path):
+    # Carpeta Downloads - Ahora apuntando a static/downloads para el Hub
+    downloads_path = os.path.join(static_path, "downloads")
+    if os.path.exists(downloads_path):
+        app.mount("/downloads", StaticFiles(directory=downloads_path), name="downloads")
+    
     app.mount("/static", StaticFiles(directory=static_path), name="static")
 
+@app.get("/gahenax_hub.html")
+async def serve_hub():
+    hub_file = os.path.join(static_path, "gahenax_hub.html")
+    if os.path.exists(hub_file):
+        return FileResponse(hub_file)
+    return JSONResponse(status_code=404, content={"detail": "Hub not found"})
+
 @app.get("/")
-async def serve_index():
+@app.get("/{full_path:path}")
+async def serve_index(request: Request, full_path: str = ""):
+    # Si la ruta comienza con /api o /static, dejar que FastAPI la maneje normalmente
+    if full_path.startswith("api") or full_path.startswith("static") or full_path.startswith("downloads"):
+        return JSONResponse(status_code=404, content={"detail": "Not Found"})
+    
     index_file = os.path.join(static_path, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)

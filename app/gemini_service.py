@@ -178,7 +178,7 @@ Ejemplo: [5, 12, 3, 8, 1]
         if context:
             context_str = f"\n\nCONTEXTO ACTUAL:\n{json.dumps(context, indent=2, ensure_ascii=False)}"
         
-PROMPT = f"""
+        prompt = f"""
 Eres un asistente legal virtual de ChechyLegis (Versión FREE).
 REGLAS CRÍTICAS:
 1. NUNCA prometas resultados judiciales ni des asesoría legal definitiva.

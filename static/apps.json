@@ -1,0 +1,18 @@
+[
+    {
+        "id": "legis-chechy",
+        "name": "ChechyLegis",
+        "status": "FREE",
+        "version": "1.0.0",
+        "description": "Sistema experto de asistencia legal penal colombiana. Versión gratuita para escritorio Windows.",
+        "downloads": {
+            "url": "/downloads/legis-chechy/LegisChechy_FREE_v1.0.0_Windows.zip",
+            "sha256_url": "/downloads/legis-chechy/SHA256SUMS.txt"
+        },
+        "docs": {
+            "readme": "/downloads/legis-chechy/README_PRIMEROS_PASOS.md",
+            "license": "/downloads/legis-chechy/LICENSE_FREE.txt"
+        },
+        "updated": "2026-02-04"
+    }
+]

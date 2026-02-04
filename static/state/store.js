@@ -7,14 +7,27 @@ const Store = {
     state: {
         currentRole: 'admin',
         currentUser: 'ADMIN',
-        filters: JSON.parse(localStorage.getItem('gahenax_filters')) || {
-            fecha_desde: '',
-            fecha_hasta: '',
-            estado: '',
-            numero_proceso: ''
-        },
+        filters: (() => {
+            try {
+                return JSON.parse(localStorage.getItem('gahenax_filters')) || {
+                    fecha_desde: '',
+                    fecha_hasta: '',
+                    estado: '',
+                    numero_proceso: ''
+                };
+            } catch (e) {
+                return {
+                    fecha_desde: '',
+                    fecha_hasta: '',
+                    estado: '',
+                    numero_proceso: ''
+                };
+            }
+        })(),
         currentView: 'list', // list, detail, form, support, settings
-        activeTaskId: null
+        activeTaskId: null,
+        lastAnalysis: null,
+        lastQuery: ''
     },
 
     setRole(role) {

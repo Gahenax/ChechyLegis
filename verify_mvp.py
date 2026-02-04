@@ -5,16 +5,42 @@ Verifica todos los criterios obligatorios definidos en la Fase 1
 
 import requests
 import json
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
-BASE_URL = "http://127.0.0.1:8000/api"
+BASE_URL = "http://127.0.0.1:8001/api"
 
 def print_test(name, passed, details=""):
-    icon = "✅" if passed else "❌"
+    icon = "[OK]" if passed else "[FAIL]"
     print(f"{icon} {name}")
     if details:
         print(f"   {details}")
     print()
+
+def clean_all_processes():
+    """🗑️ Limpiar todos los procesos (requiere Rol Admin)"""
+    print("   [CLEANUP] Eliminando procesos existentes para pruebas...")
+    headers = {
+        "Authorization": "Bearer admin-token",
+        "X-User-Name": "admin_cleanup", 
+        "X-User-Role": "admin"
+    }
+    
+    # 1. Listar
+    try:
+        r = requests.get(f"{BASE_URL}/procesos", headers=headers)
+        if r.status_code != 200:
+            return
+        items = r.json()
+        
+        # 2. Eliminar cada uno
+        for item in items:
+            pid = item["id"]
+            requests.delete(f"{BASE_URL}/procesos/{pid}", headers=headers)
+        
+        print(f"   [CLEANUP] {len(items)} procesos eliminados.")
+    except Exception as e:
+        print(f"   [CLEANUP] Error: {e}")
+
 
 def test_1_create_valid_proceso():
     """✅ Crear proceso válido -> aparece en listado"""
@@ -23,13 +49,13 @@ def test_1_create_valid_proceso():
     print("=" * 60)
     
     headers = {
-        "X-User-Role": "operator",
+        "Authorization": "Bearer operator-token",
         "X-User-Name": "test_user"
     }
     
     proceso_data = {
         "numero_proceso": "2024-TEST-001",
-        "fecha_radicacion": "2024-01-15",
+        "fecha_radicacion": datetime.now().strftime("%Y-%m-%d"),
         "estado": "ACTIVO",
         "partes": "Juan Pérez vs María García",
         "clase_proceso": "Civil",
@@ -62,13 +88,13 @@ def test_2_create_invalid_proceso():
     print("=" * 60)
     
     headers = {
-        "X-User-Role": "operator",
+        "Authorization": "Bearer operator-token",
         "X-User-Name": "test_user"
     }
     
     # Intentar crear sin numero_proceso
     invalid_data = {
-        "fecha_radicacion": "2024-01-15",
+        "fecha_radicacion": datetime.now().strftime("%Y-%m-%d"),
         "estado": "ACTIVO",
         "partes": "Test vs Test"
     }
@@ -88,18 +114,23 @@ def test_3_filter_functionality():
     print("=" * 60)
     
     headers = {
-        "X-User-Role": "viewer",
+        "Authorization": "Bearer viewer-token",
         "X-User-Name": "test_user"
     }
     
     # Crear procesos de prueba con diferentes estados y fechas
+    today = datetime.now()
+    d1 = (today - timedelta(days=1)).strftime("%Y-%m-%d")
+    d2 = (today - timedelta(days=2)).strftime("%Y-%m-%d")
+    d3 = (today - timedelta(days=3)).strftime("%Y-%m-%d")
+    
     test_procesos = [
-        {"numero_proceso": "2024-FILTER-001", "fecha_radicacion": "2024-01-10", "estado": "ACTIVO", "partes": "A vs B"},
-        {"numero_proceso": "2024-FILTER-002", "fecha_radicacion": "2024-02-15", "estado": "TERMINADO", "partes": "C vs D"},
-        {"numero_proceso": "2024-FILTER-003", "fecha_radicacion": "2024-03-20", "estado": "ACTIVO", "partes": "E vs F"},
+        {"numero_proceso": "2024-FILTER-001", "fecha_radicacion": d1, "estado": "ACTIVO", "partes": "A vs B"},
+        {"numero_proceso": "2024-FILTER-002", "fecha_radicacion": d2, "estado": "TERMINADO", "partes": "C vs D"},
+        {"numero_proceso": "2024-FILTER-003", "fecha_radicacion": d3, "estado": "ACTIVO", "partes": "E vs F"},
     ]
     
-    operator_headers = {"X-User-Role": "operator", "X-User-Name": "test_user"}
+    operator_headers = {"Authorization": "Bearer operator-token", "X-User-Name": "test_user"}
     for p in test_procesos:
         requests.post(f"{BASE_URL}/procesos", json=p, headers=operator_headers)
     
@@ -109,7 +140,10 @@ def test_3_filter_functionality():
     activos_count = sum(1 for p in activos if p["estado"] == "ACTIVO")
     
     # Test filtro por rango de fechas
-    response = requests.get(f"{BASE_URL}/procesos?fecha_desde=2024-02-01&fecha_hasta=2024-03-31", headers=headers)
+    # Ajustamos el rango para incluir hoy y los ultimos dias
+    f_start = (today - timedelta(days=5)).strftime("%Y-%m-%d")
+    f_end = (today + timedelta(days=1)).strftime("%Y-%m-%d")
+    response = requests.get(f"{BASE_URL}/procesos?fecha_desde={f_start}&fecha_hasta={f_end}", headers=headers)
     filtered = response.json()
     
     print_test("Filtro por estado funciona", activos_count >= 2, 
@@ -124,14 +158,14 @@ def test_4_audit_trail():
     print("=" * 60)
     
     headers = {
-        "X-User-Role": "operator",
+        "Authorization": "Bearer operator-token",
         "X-User-Name": "audit_tester"
     }
     
     # Crear proceso
     proceso_data = {
         "numero_proceso": "2024-AUDIT-001",
-        "fecha_radicacion": "2024-01-15",
+        "fecha_radicacion": datetime.now().strftime("%Y-%m-%d"),
         "estado": "ACTIVO",
         "partes": "Original vs Original"
     }
@@ -172,14 +206,14 @@ def test_5_role_permissions():
     print("=" * 60)
     
     viewer_headers = {
-        "X-User-Role": "viewer",
+        "Authorization": "Bearer viewer-token",
         "X-User-Name": "viewer_user"
     }
     
     # Intentar crear como viewer
     proceso_data = {
         "numero_proceso": "2024-FORBIDDEN-001",
-        "fecha_radicacion": "2024-01-15",
+        "fecha_radicacion": datetime.now().strftime("%Y-%m-%d"),
         "estado": "ACTIVO",
         "partes": "Test vs Test"
     }
@@ -188,10 +222,10 @@ def test_5_role_permissions():
     create_forbidden = create_response.status_code == 403
     
     # Crear un proceso como operator para intentar editarlo/eliminarlo como viewer
-    operator_headers = {"X-User-Role": "operator", "X-User-Name": "operator_user"}
+    operator_headers = {"Authorization": "Bearer operator-token", "X-User-Name": "operator_user"}
     test_proceso = requests.post(f"{BASE_URL}/procesos", json={
         "numero_proceso": "2024-ROLE-TEST",
-        "fecha_radicacion": "2024-01-15",
+        "fecha_radicacion": datetime.now().strftime("%Y-%m-%d"),
         "estado": "ACTIVO",
         "partes": "Test vs Test"
     }, headers=operator_headers).json()
@@ -222,7 +256,7 @@ def test_6_performance():
     print("=" * 60)
     
     headers = {
-        "X-User-Role": "viewer",
+        "Authorization": "Bearer viewer-token",
         "X-User-Name": "test_user"
     }
     
@@ -245,19 +279,30 @@ def main():
     
     try:
         # Verificar que el servidor está corriendo
-        response = requests.get(f"{BASE_URL}/procesos", headers={"X-User-Role": "viewer", "X-User-Name": "test"})
-        print(f"✅ Servidor corriendo en {BASE_URL}\n")
+        response = requests.get(f"{BASE_URL}/procesos", headers={"Authorization": "Bearer viewer-token", "X-User-Name": "test"})
+        print(f"[OK] Servidor corriendo en {BASE_URL}\n")
     except Exception as e:
-        print(f"❌ Error: No se puede conectar al servidor en {BASE_URL}")
+        print(f"[FAIL] Error: No se puede conectar al servidor en {BASE_URL}")
         print(f"   Asegúrate de que el servidor esté corriendo con: uvicorn app.main:app --reload")
         return
     
     # Ejecutar tests
+    clean_all_processes()
     test_1_create_valid_proceso()
+    
+    clean_all_processes()
     test_2_create_invalid_proceso()
+    
+    clean_all_processes()
     test_3_filter_functionality()
+    
+    clean_all_processes()
     test_4_audit_trail()
+    
+    clean_all_processes()
     test_5_role_permissions()
+    
+    clean_all_processes()
     test_6_performance()
     
     print("=" * 60)

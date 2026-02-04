@@ -1,0 +1,6 @@
+
+Algorithm       Hash                                                                   Path                            
+---------       ----                                                                   ----                            
+SHA256          605EDB643933C4AB6B4FFD752C5B473D6468DAF80CF6211D7A4EEC64FC41661B       C:\Users\USUARIO\OneDrive\Des...
+
+

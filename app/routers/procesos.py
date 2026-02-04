@@ -59,7 +59,7 @@ def get_proceso_detail(
         raise HTTPException(status_code=404, detail="Proceso no encontrado")
     
     audit_trail = crud.get_audit_trail(db, proceso_id)
-    proceso_data = schemas.ProcesoSchema.from_orm(proceso).dict()
+    proceso_data = schemas.ProcesoSchema.model_validate(proceso).model_dump()
     proceso_data["audit_trail"] = audit_trail
     return proceso_data
 

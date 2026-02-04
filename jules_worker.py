@@ -87,23 +87,59 @@ class JulesWorker:
             logger.error(f"Error en verificación: {e}")
             return False
 
+    ALLOWED_COMMANDS = [
+        "python build_portable.py",
+        "python auditoria_semaforo.py",
+        "pip list --outdated",
+        "python verify_mvp.py",
+        "python verify_free_limits.py"
+    ]
+
     def process_task(self, task: PatchTask):
-        logger.info(f"Consumiendo tarea {task.id} -> {task.target_file}")
+        logger.info(f"Consumiendo tarea {task.id} -> Acción: {task.action}")
         
         if not self.validate_subordination(task):
             self.create_report(task, "FAILED", "Error de subordinación: Alcance prohibido.")
             return
 
         try:
-            # Aplicar Patch (Simulado aquí por brevedad, se integraría con herramientas de edición)
-            with open(task.target_file, "w", encoding="utf-8") as f:
-                f.write(task.content)
+            if task.action == "EXEC":
+                # Sniper Mode: Strict Command Validation
+                is_allowed = any(task.content.startswith(cmd) for cmd in self.ALLOWED_COMMANDS)
+                if not is_allowed:
+                    logger.warning(f"INTENTO DE EJECUCIÓN NO PERMITIDO: {task.content}")
+                    self.create_report(task, "DENIED", f"Comando '{task.content}' no está en la lista blanca de seguridad.")
+                    return
+
+                logger.info(f"Ejecutando comando seguro: {task.content}")
+                result = subprocess.run(task.content, shell=True, capture_output=True, text=True)
+                if result.returncode == 0:
+                    self.create_report(task, "DONE", f"Comando ejecutado con éxito.\nSTDOUT: {result.stdout}")
+                else:
+                    self.create_report(task, "FAILED", f"Comando falló (code {result.returncode}).\nSTDERR: {result.stderr}")
             
-            # Verificación determinista
-            if self.run_deterministic_verification(task):
-                self.create_report(task, "DONE", "Patch aplicado y verificado correctamente.")
+            elif task.action == "PATCH" or task.action == "REPLACE":
+                logger.info(f"Aplicando patch/replace en {task.target_file}")
+                with open(task.target_file, "w", encoding="utf-8") as f:
+                    f.write(task.content)
+                
+                if self.run_deterministic_verification(task):
+                    self.create_report(task, "DONE", "Patch aplicado y verificado correctamente.")
+                else:
+                    self.create_report(task, "FAILED", "Validación determinista fallida tras aplicar patch.")
+            
+            elif task.action == "AUDIT":
+                logger.info("Iniciando escaneo de seguridad...")
+                # Simular escaneo o ejecutar pip audit/safety
+                result = subprocess.run(f"pip list --outdated", shell=True, capture_output=True, text=True)
+                summary = f"Escaneo completado. Paquetes desactualizados:\n{result.stdout}"
+                self.create_report(task, "DONE", summary)
+            
             else:
-                self.create_report(task, "FAILED", "Validación determinista fallida tras aplicar patch.")
+                # Comportamiento por defecto: escribir a archivo
+                with open(task.target_file, "w", encoding="utf-8") as f:
+                    f.write(task.content)
+                self.create_report(task, "DONE", f"Tarea '{task.action}' procesada por defecto.")
                 
         except Exception as e:
             logger.error(f"Error procesando tarea {task.id}: {e}")

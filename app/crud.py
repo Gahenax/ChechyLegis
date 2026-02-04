@@ -35,7 +35,7 @@ def get_procesos(db: Session, skip: int = 0, limit: int = 100,
     return query.offset(skip).limit(limit).all()
 
 def create_proceso(db: Session, proceso: schemas.ProcesoCreate):
-    db_proceso = models.Proceso(**proceso.dict())
+    db_proceso = models.Proceso(**proceso.model_dump())
     db.add(db_proceso)
     db.commit()
     db.refresh(db_proceso)
@@ -46,7 +46,7 @@ def update_proceso(db: Session, proceso_id: int, updates: schemas.ProcesoUpdate)
     if not db_proceso:
         return None
     
-    update_data = updates.dict(exclude_unset=True)
+    update_data = updates.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(db_proceso, key, value)
     

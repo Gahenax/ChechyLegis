@@ -245,22 +245,40 @@ const Render = {
         this.clearContent();
         let html = this.header('Archivo Central GAHENAX', '');
         html += `
-            <div class="lex-expediente" style="background: linear-gradient(135deg, rgba(49, 46, 129, 0.1), transparent);">
+            <div class="lex-expediente" style="background: linear-gradient(135deg, rgba(49, 46, 129, 0.1), transparent); margin-bottom:2rem;">
                 <h3 style="color:var(--lex-accent);">Ecosistema Judicial GAHENAX</h3>
-                <p style="margin-bottom:2rem; opacity:0.8; font-family:var(--lex-font-heading); font-size:1.1rem;">
+                <p style="margin-bottom:1.5rem; opacity:0.8; font-family:var(--lex-font-heading); font-size:1.1rem;">
                     Acceda a las herramientas de despliegue, actualizaciones y administración del núcleo Gahenax desde el portal centralizado de jurisprudencia digital.
                 </p>
-                <a href="/static/gahenax_hub.html" class="lex-btn lex-btn-primary" style="text-decoration:none;">
+                <a href="/static/gahenax_hub.html" class="lex-btn lex-btn-primary" style="text-decoration:none; display:inline-flex;">
                     <i class="fas fa-landmark"></i> ENTRAR AL ARCHIVO CENTRAL
                 </a>
             </div>
 
-            <div class="lex-expediente">
-                <h4>ESTADO DE SESIÓN (MODO TRIBUNAL)</h4>
-                <div style="background:rgba(0,0,0,0.4); padding:1rem; font-family:monospace; font-size:0.75rem; color:var(--lex-text-muted);">
-                    <pre>${JSON.stringify(state, null, 2)}</pre>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem;">
+                <div class="lex-expediente">
+                    <h4 style="margin-bottom:1.5rem; border-bottom:1px solid var(--lex-border); padding-bottom:0.5rem;"><i class="fas fa-microchip"></i> JULES CONTROL CENTER</h4>
+                    <p style="font-size:0.75rem; color:var(--lex-text-muted); margin-bottom:1.5rem;">Delegación de tareas asíncronas de mantenimiento y despliegue.</p>
+                    <div style="display:flex; flex-direction:column; gap:1rem;">
+                        <button class="lex-btn" onclick="App.dispatchJules('AUDIT', 'Security Scan')">
+                            <i class="fas fa-shield-halved"></i> AUDITORÍA DE SEGURIDAD
+                        </button>
+                        <button class="lex-btn" onclick="App.dispatchJules('EXEC', 'Build Portable', 'python build_portable.py --src ./static --out ./release --name Chechy --version 1.1.0 --platform windows')">
+                            <i class="fas fa-box-open"></i> GENERAR RELEASE ZIP
+                        </button>
+                    </div>
+                    <div id="jules-status-panel" style="margin-top:2rem; padding:1rem; background:rgba(0,0,0,0.2); font-size:0.7rem; display:none;">
+                        <!-- Status injection -->
+                    </div>
                 </div>
-                <button class="lex-btn" style="margin-top:1rem;" onclick="localStorage.clear(); location.reload();">RESTABLECER SISTEMA</button>
+
+                <div class="lex-expediente">
+                    <h4 style="margin-bottom:1.5rem; border-bottom:1px solid var(--lex-border); padding-bottom:0.5rem;"><i class="fas fa-fingerprint"></i> ESTADO DE SESIÓN</h4>
+                    <div style="background:rgba(0,0,0,0.4); padding:1rem; font-family:monospace; font-size:0.65rem; color:var(--lex-text-muted); height:150px; overflow:auto;">
+                        <pre>${JSON.stringify(state, null, 2)}</pre>
+                    </div>
+                    <button class="lex-btn" style="margin-top:1rem; width:100%; justify-content:center;" onclick="localStorage.clear(); location.reload();">RESTABLECER SISTEMA</button>
+                </div>
             </div>
         `;
         this.appContent.innerHTML = html;

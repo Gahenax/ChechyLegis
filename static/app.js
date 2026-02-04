@@ -79,6 +79,38 @@ const App = {
             window.GahenaxStore.state.lastQuery = query;
             this.navigate('analysis');
         } catch (err) { window.GahenaxRender.renderError(err); }
+    },
+
+    async dispatchJules(action, label, content = null) {
+        const panel = document.getElementById('jules-status-panel');
+        panel.style.display = 'block';
+        panel.innerHTML = `<div style="color:var(--lex-primary);">DESPACHANDO TAREA: ${label}...</div>`;
+
+        try {
+            const data = { action, content: content || label };
+            const { task_id } = await window.GahenaxAPI.dispatchJulesTask(data);
+            panel.innerHTML = `<div style="color:var(--lex-primary);">TAREA EN COLA: ${task_id}</div>`;
+
+            // Poll for status
+            const poll = setInterval(async () => {
+                try {
+                    const report = await window.GahenaxAPI.fetchJulesReport(task_id);
+                    if (report.status === 'DONE' || report.status === 'FAILED' || report.status === 'ERROR') {
+                        clearInterval(poll);
+                        const color = report.status === 'DONE' ? 'var(--success)' : 'var(--error)';
+                        panel.innerHTML = `
+                            <div style="color:${color}; font-weight:700;">FINALIZADO: ${report.status}</div>
+                            <div style="margin-top:0.5rem; opacity:0.8; white-space:pre-wrap;">${report.message}</div>
+                        `;
+                    } else {
+                        panel.innerHTML = `<div style="color:var(--lex-accent);">JULES PROCESANDO: ${task_id}... (${report.status})</div>`;
+                    }
+                } catch (e) { /* Pending or error */ }
+            }, 3000);
+
+        } catch (err) {
+            panel.innerHTML = `<div style="color:var(--lex-error);">FALLO DE DESPACHO: ${err.message}</div>`;
+        }
     }
 };
 

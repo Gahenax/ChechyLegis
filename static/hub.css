@@ -1,0 +1,225 @@
+/* GAHENAX HUB - THEME SYSTEM */
+:root {
+    --hub-bg: #05070a;
+    --hub-surface: #0c111a;
+    --hub-border: #1e293b;
+    --hub-primary: #312e81;
+    /* Indigo Deep */
+    --hub-accent: #b45309;
+    /* Muted Gold */
+    --hub-text: #e2e8f0;
+    --hub-muted: #64748b;
+    --hub-success: #064e3b;
+    --hub-font: 'Inter', system-ui, sans-serif;
+    --hub-font-serif: 'EB Garamond', serif;
+}
+
+body {
+    background-color: var(--hub-bg);
+    color: var(--hub-text);
+    font-family: var(--hub-font);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* HEADER */
+header.hub-header {
+    background: rgba(5, 7, 10, 0.95);
+    border-bottom: 1px solid var(--hub-border);
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+}
+
+.hub-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.hub-brand h1 {
+    font-family: var(--hub-font-serif);
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    margin: 0;
+    color: white;
+}
+
+.hub-brand span {
+    color: var(--hub-accent);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+/* SEARCH */
+.hub-search-container {
+    position: relative;
+    width: 300px;
+}
+
+.hub-search {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--hub-border);
+    color: white;
+    padding: 0.5rem 0;
+    font-family: var(--hub-font);
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.hub-search:focus {
+    outline: none;
+    border-bottom-color: var(--hub-primary);
+}
+
+/* MAIN GRID */
+main.hub-main {
+    flex: 1;
+    padding: 3rem;
+    background: radial-gradient(circle at top right, rgba(49, 46, 129, 0.1), transparent);
+    overflow-y: auto;
+}
+
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* CARD */
+.app-card {
+    background: var(--hub-surface);
+    border: 1px solid var(--hub-border);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s;
+    position: relative;
+}
+
+.app-card:hover {
+    border-color: var(--hub-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.app-title {
+    font-family: var(--hub-font-serif);
+    font-size: 1.4rem;
+    margin: 0;
+    color: var(--hub-text);
+}
+
+.app-version {
+    font-size: 0.7rem;
+    color: var(--hub-muted);
+    font-family: monospace;
+    margin-top: 0.2rem;
+}
+
+.app-status {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--hub-success);
+    color: var(--hub-success);
+    letter-spacing: 1px;
+}
+
+.app-desc {
+    font-size: 0.85rem;
+    color: var(--hub-muted);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    flex: 1;
+}
+
+/* ACTIONS */
+.app-actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: auto;
+}
+
+.btn-download {
+    flex: 1;
+    background: var(--hub-primary);
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    padding: 0.6rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--hub-primary);
+    transition: 0.3s;
+}
+
+.btn-download:hover {
+    background: transparent;
+}
+
+.btn-sha {
+    color: var(--hub-muted);
+    text-decoration: none;
+    font-size: 0.65rem;
+    border: 1px solid var(--hub-border);
+    padding: 0.6rem;
+    transition: 0.3s;
+}
+
+.btn-sha:hover {
+    border-color: var(--hub-accent);
+    color: var(--hub-accent);
+}
+
+.doc-links {
+    width: 100%;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--hub-border);
+    display: flex;
+    gap: 1rem;
+}
+
+.doc-link {
+    font-size: 0.65rem;
+    color: var(--hub-muted);
+    text-decoration: none;
+}
+
+.doc-link:hover {
+    text-decoration: underline;
+}
+
+/* FOOTER */
+footer {
+    padding: 1.5rem;
+    text-align: center;
+    border-top: 1px solid var(--hub-border);
+    font-size: 0.7rem;
+    color: var(--hub-muted);
+}

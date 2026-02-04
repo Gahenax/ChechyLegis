@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAHENAX HUB | Central de Descargas</title>
+    <link rel="stylesheet" href="hub.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Inter:wght@300;400;600&display=swap">
+</head>
+
+<body>
+
+    <header class="hub-header">
+        <div class="hub-brand">
+            <div style="font-size: 2rem;">⚖</div>
+            <div>
+                <h1>GAHENAX</h1>
+                <span>APPLICATION HUB</span>
+            </div>
+        </div>
+        <div class="hub-search-container">
+            <input type="text" id="appSearch" class="hub-search" placeholder="Buscar aplicación...">
+        </div>
+    </header>
+
+    <main class="hub-main">
+        <div id="gridContainer" class="hub-grid">
+            <!-- RENDER TARGET -->
+            <div style="color:var(--hub-muted); grid-column: 1/-1; text-align:center;">Cargando catálogo...</div>
+        </div>
+    </main>
+
+    <footer>
+        <p>ChechyLegis no constituye asesoría legal ni garantiza resultados. El criterio final es humano.</p>
+        <p>&copy; 2026 GAHENAX ARCHIVE S.A.S. | PROCESAMIENTO SEGURO</p>
+    </footer>
+
+    <script src="hub.js"></script>
+</body>
+
+</html>
